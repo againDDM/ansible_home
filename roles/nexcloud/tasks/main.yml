@@ -6,7 +6,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0700
-  become: true
 
 - name: Render docker-compose template
   template:
@@ -16,7 +15,6 @@
     group: "{{ ansible_user }}"
     validate: "docker-compose -f %s config"
     mode: 0600
-  become: true
 
 - name: Docker-compose UP
   docker_compose:
@@ -27,5 +25,4 @@
       - docker-compose.yaml
     remove_orphans: yes
     pull: yes
-  become: true
   register: output
