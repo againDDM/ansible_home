@@ -1,0 +1,5 @@
+.idea/
+.vscode/
+.venv/
+roles_galaxy/
+.vault_pass.txt

@@ -1,0 +1,4 @@
+- src: https://github.com/geerlingguy/ansible-role-docker.git
+  scm: git
+  name: docker
+  version: "3.0.0"

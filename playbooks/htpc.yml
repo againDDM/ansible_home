@@ -1,0 +1,49 @@
+---
+- name: base
+  hosts:
+    - htpc
+  become: true
+  tags: base
+  tasks:
+    - name: apt install
+      apt:
+        pkg:
+          - htop
+          - atop
+          - ethtool
+          - dnsutils
+          - smartmontools
+          - iotop
+          - iftop
+          - iperf3
+          - mtr
+          - tmux
+          - python3-dev
+          - python3-pip
+          - python3-venv
+        state: latest
+        install_recommends: no
+        update_cache: yes
+    - name: apt upgrade
+      apt:
+        upgrade: safe
+        install_recommends: no
+        update_cache: yes
+    - name: pip install
+      pip:
+        name: "{{ item }}"
+        extra_args: --upgrade
+      loop:
+        - pip
+        - docker
+        - docker-compose
+        - youtube-dl
+        - hvac
+
+- name: docker
+  hosts:
+    - htpc
+  become: true
+  tags: base
+  roles:
+    - docker
