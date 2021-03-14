@@ -47,3 +47,10 @@
   tags: base
   roles:
     - docker
+
+- name: nexcloud
+  hosts:
+    - htpc
+  tags: nexcloud
+  roles:
+    - nexcloud

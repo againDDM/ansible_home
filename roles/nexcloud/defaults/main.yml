@@ -1,0 +1,23 @@
+---
+project_name: nexcloud
+project_src: $HOME/nexcloud
+application_container_name: nextcloud_application
+nextcloud_version: 21-apache
+nextcloud_external_port: 65080
+nexcloud_data_host_path: /media/whiteHDD/HDD-cloud
+nexcloud_memory_limit_mb: 1024
+postgres_container_name: nextcloud_database
+postgres_version: 12
+pgdata_container_path: /var/lib/postgresql/data
+pgdata_host_path: /opt/pgcloud
+postgres_host: database
+postgres_db: next_cloud_data
+postgres_user: nc_admin
+postgres_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  39313339656362393139366264376239363830383836353238393164383362613863346139363664
+  3534346464626439336665666332643966643138323665640a313562323966663831323431363737
+  61386333353566313037376232376433616130633433373738623337393135626336616530336234
+  6137636363366239330a663635663035643366323733313030313134376164613664373939643166
+  36323862316264326132326539393539643830663139626430366464363861346330
+postgres_memory_limit_mb: 256

@@ -1,0 +1,41 @@
+---
+version: "2.4"
+
+services:
+  db:
+    container_name: "{{ postgres_container_name }}"
+    image: "postgres:{{ postgres_version }}"
+    restart: unless-stopped
+    tty: true
+    oom_kill_disable: true
+    mem_limit: "{{ postgres_memory_limit_mb }}M"
+    mem_reservation: "{{ postgres_memory_limit_mb // 2 }}M"
+    shm_size: "{{ postgres_memory_limit_mb // 4 }}M"
+    volumes:
+      - "{{ pgdata_host_path }}:{{ pgdata_container_path }}:rw"
+    environment:
+      POSTGRES_DB: "{{ postgres_db }}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      PGDATA: "{{ pgdata_container_path }}"
+
+  app:
+    container_name: "{{ application_container_name }}"
+    image: "nextcloud:{{ nextcloud_version }}"
+    restart: unless-stopped
+    tty: true
+    oom_kill_disable: false
+    mem_limit: "{{ nexcloud_memory_limit_mb }}M"
+    volumes:
+      - "{{ nexcloud_data_host_path }}:/var/www/html:rw"
+    environment:
+      POSTGRES_HOST: "{{ postgres_host }}"
+      POSTGRES_DB: "{{ postgres_db }}"
+      POSTGRES_USER: "{{ postgres_user }}"
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+    ports:
+      - "{{ nextcloud_external_port }}:80"
+    links:
+      - "db:{{ postgres_host }}"
+    depends_on:
+      - "db"
