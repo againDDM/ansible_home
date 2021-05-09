@@ -1,0 +1,14 @@
+---
+minio_user: minio
+minio_group: minio
+minio_download_url: https://dl.min.io/server/minio/release/linux-amd64/minio
+minio_bin_dir: /usr/local/bin
+minio_config_dir: /etc/minio
+minio_address: "0.0.0.0"
+minio_port: 9001
+minio_access_key: "minio"
+minio_volumes: "/opt/minio/volumes"
+minio_secret_key: "miniostorage"
+minio_environment_file: "/etc/default/minio"
+minio_systemd_dir: "/etc/systemd/system"
+minio_systemd_unit: "minio.service"

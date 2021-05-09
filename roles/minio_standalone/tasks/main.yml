@@ -1,0 +1,69 @@
+---
+- name: Create group minio
+  group:
+    name: "{{ minio_group }}"
+    state: present
+  become: true
+
+- name: Create user minio
+  user:
+    name: "{{ minio_user }}"
+    comment: "minio user"
+    group: "{{ minio_group }}"
+    shell: /sbin/nologin
+    state: present
+  become: true
+
+- name: Download minio
+  get_url:
+    url: "{{ minio_download_url }}"
+    dest: "{{ minio_bin_dir }}/minio"
+    mode: 0755
+    owner: "{{ minio_user }}"
+    group: "{{ minio_group }}"
+    force: yes
+  become: true
+
+- name: Create minio config directory
+  file:
+    path: "{{ minio_config_dir }}"
+    owner: "{{ minio_user }}"
+    group: "{{ minio_group }}"
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Create minio volumes directory
+  file:
+    path: "{{ minio_volumes }}"
+    owner: "{{ minio_user }}"
+    group: "{{ minio_group }}"
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Render minio default template
+  template:
+    dest: "{{ minio_environment_file }}"
+    src: default.j2
+    owner: "{{ minio_user }}"
+    group: "{{ minio_group }}"
+    mode: 0644
+  become: true
+
+- name: Render minio systemd service template
+  template:
+    dest: "{{ minio_systemd_dir }}/{{ minio_systemd_unit }}"
+    src: service.j2
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+
+- name: Enable minio systemd service
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: "{{ minio_systemd_unit }}"
+    state: started
+  become: true

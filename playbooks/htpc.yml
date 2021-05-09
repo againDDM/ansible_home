@@ -58,3 +58,10 @@
   tags: nexcloud
   roles:
     - nexcloud
+
+- name: minio
+  hosts:
+    - htpc
+  tags: minio
+  roles:
+    - minio_standalone
