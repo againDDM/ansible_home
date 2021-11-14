@@ -22,11 +22,13 @@
     state: latest
     install_recommends: no
     update_cache: yes
+  become: true
 - name: apt upgrade
   apt:
     upgrade: safe
     install_recommends: no
     update_cache: yes
+  become: true
 - name: pip install
   pip:
     name: "{{ item }}"

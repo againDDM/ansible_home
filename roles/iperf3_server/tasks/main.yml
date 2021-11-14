@@ -21,6 +21,9 @@
     state: latest
     install_recommends: no
     update_cache: yes
+  become: true
+  notify:
+    - Restart iperf
 
 - name: Render iperf systemd service template
   template:
@@ -30,6 +33,8 @@
     group: root
     mode: 0755
   become: true
+  notify:
+    - Restart iperf
 
 - name: Enable iperf systemd service
   systemd:

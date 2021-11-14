@@ -13,7 +13,6 @@ Group={{ minio_group }}
 
 EnvironmentFile={{ minio_environment_file }}
 ExecStartPre=/bin/bash -c "if [ -z \"${MINIO_VOLUMES}\" ]; then echo \"Variable MINIO_VOLUMES not set in {{ minio_environment_file }}\"; exit 1; fi"
-
 ExecStart={{ minio_bin_dir }}/minio server $MINIO_OPTS $MINIO_VOLUMES
 
 # Let systemd restart this service always

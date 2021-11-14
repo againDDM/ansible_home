@@ -2,6 +2,7 @@
 version: "2.4"
 
 services:
+
   db:
     container_name: "{{ postgres_container_name }}"
     image: "postgres:{{ postgres_version }}"
@@ -18,6 +19,11 @@ services:
       POSTGRES_USER: "{{ postgres_user }}"
       POSTGRES_PASSWORD: "{{ postgres_password }}"
       PGDATA: "{{ pgdata_container_path }}"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"
 
   app:
     container_name: "{{ application_container_name }}"
@@ -39,3 +45,8 @@ services:
       - "db:{{ postgres_host }}"
     depends_on:
       - "db"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: 10m
+        max-file: "3"

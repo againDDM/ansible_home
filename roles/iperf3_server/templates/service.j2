@@ -15,7 +15,7 @@ ExecStart=/usr/bin/iperf3 -s
 Restart=always
 
 # Specifies the maximum file descriptor number that can be opened by this process
-LimitNOFILE=65536
+LimitNOFILE=1024
 
 TimeoutStopSec=30s
 SendSIGKILL=no

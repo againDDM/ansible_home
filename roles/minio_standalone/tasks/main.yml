@@ -21,8 +21,11 @@
     mode: 0755
     owner: "{{ minio_user }}"
     group: "{{ minio_group }}"
-    force: yes
+    backup: true
+    force: false
   become: true
+  notify:
+    - Restart minio
 
 - name: Create minio config directory
   file:
@@ -50,6 +53,8 @@
     group: "{{ minio_group }}"
     mode: 0644
   become: true
+  notify:
+    - Restart minio
 
 - name: Render minio systemd service template
   template:
@@ -59,6 +64,8 @@
     group: root
     mode: 0755
   become: true
+  notify:
+    - Restart minio
 
 - name: Enable minio systemd service
   systemd:
