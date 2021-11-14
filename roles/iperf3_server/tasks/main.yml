@@ -1,0 +1,40 @@
+---
+- name: Create group iperf
+  group:
+    name: "{{ iperf_group }}"
+    state: present
+  become: true
+
+- name: Create user iperf
+  user:
+    name: "{{ iperf_user }}"
+    comment: "iperf user"
+    group: "{{ iperf_group }}"
+    shell: /sbin/nologin
+    state: present
+  become: true
+
+- name: Install iperf3
+  apt:
+    pkg:
+      - iperf3
+    state: latest
+    install_recommends: no
+    update_cache: yes
+
+- name: Render iperf systemd service template
+  template:
+    dest: "{{ iperf_systemd_dir }}/{{ iperf_systemd_unit }}"
+    src: service.j2
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+
+- name: Enable iperf systemd service
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: "{{ iperf_systemd_unit }}"
+    state: started
+  become: true

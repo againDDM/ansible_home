@@ -1,0 +1,24 @@
+[Unit]
+Description=iperf3
+Documentation=https://iperf.fr/iperf-doc.php
+Wants=network-online.target
+After=network-online.target
+AssertFileIsExecutable=/usr/bin/iperf3
+
+[Service]
+User={{ iperf_user }}
+Group={{ iperf_group }}
+
+ExecStart=/usr/bin/iperf3 -s
+
+# Let systemd restart this service always
+Restart=always
+
+# Specifies the maximum file descriptor number that can be opened by this process
+LimitNOFILE=65536
+
+TimeoutStopSec=30s
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+---
+iperf_user: iperf
+iperf_group: iperf
+iperf_systemd_dir: "/etc/systemd/system"
+iperf_systemd_unit: "iperf.service"
