@@ -18,7 +18,7 @@
   apt:
     pkg:
       - iperf3
-    state: latest
+    state: present
     install_recommends: no
     update_cache: yes
   become: true
