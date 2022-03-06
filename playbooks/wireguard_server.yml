@@ -1,0 +1,16 @@
+---
+
+- name: base
+  hosts:
+    - wireguard
+  tags: base
+  roles:
+    - base
+  become: true
+
+- name: wireguard
+  hosts:
+    - wireguard
+  roles:
+    - wireguard
+  tags: wireguard

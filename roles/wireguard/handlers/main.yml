@@ -1,0 +1,8 @@
+---
+
+- name: restart wg
+  systemd:
+    daemon_reload: yes
+    state: restarted
+    name: "wg-quick@{{ wireguard_server.interface_name }}"
+  become: true

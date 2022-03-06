@@ -5,3 +5,6 @@ all:
     home:
       hosts:
         htpc:
+    vps:
+      hosts:
+        wireguard:
