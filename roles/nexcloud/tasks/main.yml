@@ -28,7 +28,8 @@
     pull: yes
     restarted: false
   register: output
-  when: not compose is changed
+  when:
+    - not compose is changed
 
 - name: Docker-compose restart
   docker_compose:
@@ -41,4 +42,5 @@
     pull: yes
     restarted: true
   register: output
-  when: compose is changed
+  when:
+    - compose is changed
