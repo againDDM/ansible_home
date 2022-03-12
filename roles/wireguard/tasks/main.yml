@@ -63,7 +63,7 @@
     src: wg_client_conf.j2
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: '0600'
+    mode: '0644'
     backup: false
   with_items: "{{ wireguard_peers }}"
   become: false
