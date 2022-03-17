@@ -1,0 +1,7 @@
+---
+
+ansible_host: "{{ vault_ansible_host }}"
+ansible_become_password: "{{ vault_ansible_become_password }}"
+
+wireguard_server: "{{ vault_wireguard_server }}"
+wireguard_peers: "{{ vault_wireguard_peers }}"

@@ -4,6 +4,17 @@
   hosts:
     - wireguard
   tags: base
+  tasks:
+    - name: set hostname
+      hostname:
+        name: "{{ inventory_hostname }}"
+  become: true
+
+
+- name: base
+  hosts:
+    - wireguard
+  tags: base
   roles:
     - base
   become: true
