@@ -42,7 +42,10 @@ explicit-exit-notify 1
 {% for dns_server in openvpn_dns_servers %}push "dhcp-option DNS {{ dns_server }}"
 {% endfor %}
 
-;push "redirect-gateway def1 bypass-dhcp"
+{% if openvpn_redirect_gateway %}
+push "redirect-gateway def1 bypass-dhcp"
+{% else %}
 {% for subnet in blocked_lists %}
 push "route {{ subnet | ansible.netcommon.ipaddr('network') }} {{ subnet | ansible.netcommon.ipaddr('netmask') }}"
 {% endfor %}
+{% endif%}

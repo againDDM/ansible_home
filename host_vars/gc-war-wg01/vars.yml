@@ -8,3 +8,4 @@ wireguard_peers: "{{ vault_wireguard_peers }}"
 
 openvpn_subnet: "{{ vault_openvpn_subnet }}"
 openvpn_clients: "{{ vault_openvpn_clients }}"
+openvpn_redirect_gateway: "{{ vault_openvpn_redirect_gateway }}"

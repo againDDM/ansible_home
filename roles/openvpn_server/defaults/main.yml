@@ -5,6 +5,8 @@ openvpn_proto: udp
 openvpn_dev: tun0
 openvpn_server_external_ip: "{{ ansible_host }}"
 
+openvpn_redirect_gateway: true
+
 openvpn_clients:
   - client
 

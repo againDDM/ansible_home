@@ -115,44 +115,45 @@
     group: "{{ ansible_user }}"
   become: false
 
-- name: get blocked lists
-  get_url:
-    url: "{{ item.value }}"
-    dest: "{{ ansible_user_dir }}/openvpn-configs/{{ item.key }}.txt"
-    mode: "0644"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    force: false
-    backup: true
-    timeout: 30
-  with_dict:
-    subnet: "https://antifilter.download/list/subnet.lst"
-    ipsum: "https://antifilter.download/list/ipsum.lst"
-  retries: 3
-  delay: 10
+- block:
+  - name: get blocked lists
+    get_url:
+      url: "{{ item.value }}"
+      dest: "{{ ansible_user_dir }}/openvpn-configs/{{ item.key }}.txt"
+      mode: "0644"
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      force: false
+      backup: true
+      timeout: 30
+    with_dict:
+      subnet: "https://antifilter.download/list/subnet.lst"
+      ipsum: "https://antifilter.download/list/ipsum.lst"
+    retries: 3
+    delay: 10
+  - name: slurp blocked subnet
+    slurp:
+      src: "{{ ansible_user_dir }}/openvpn-configs/subnet.txt"
+    register: blocked_lists_subnet
+  - name: calculate subnet_content
+    set_fact:
+      subnet_content: "{{ blocked_lists_subnet.content | b64decode }}"
+  - name: slurp blocked ipsum
+    slurp:
+      src: "{{ ansible_user_dir }}/openvpn-configs/ipsum.txt"
+    register: blocked_lists_ipsum
+  - name: calculate ipsum_content
+    set_fact:
+      ipsum_content: "{{ blocked_lists_ipsum.content | b64decode }}"
+  - name: set blocked_lists
+    set_fact:
+      blocked_lists: "{{ subnet_content.split() + ipsum_content.split() }}"
+  when: not openvpn_redirect_gateway
+  rescue:
+    - name: fallback to openvpn_redirect_gateway
+      set_fact:
+        openvpn_redirect_gateway: true
   become: false
-
-- name: slurp blocked subnet
-  slurp:
-    src: "{{ ansible_user_dir }}/openvpn-configs/subnet.txt"
-  register: blocked_lists_subnet
-
-- name: calculate subnet_content
-  set_fact:
-    subnet_content: "{{ blocked_lists_subnet.content | b64decode }}"
-
-- name: slurp blocked ipsum
-  slurp:
-    src: "{{ ansible_user_dir }}/openvpn-configs/ipsum.txt"
-  register: blocked_lists_ipsum
-
-- name: calculate ipsum_content
-  set_fact:
-    ipsum_content: "{{ blocked_lists_ipsum.content | b64decode }}"
-
-- name: set blocked_lists
-  set_fact:
-    blocked_lists: "{{ subnet_content.split() + ipsum_content.split() }}"
 
 - name: render server config
   template:
