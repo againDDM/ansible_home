@@ -2,7 +2,7 @@
 
 - name: base
   hosts:
-    - wireguard
+    - vpn_servers
   tags: base
   tasks:
     - name: set hostname
@@ -10,10 +10,9 @@
         name: "{{ inventory_hostname }}"
   become: true
 
-
 - name: base
   hosts:
-    - wireguard
+    - vpn_servers
   tags: base
   roles:
     - base
@@ -23,5 +22,12 @@
   hosts:
     - wireguard
   roles:
-    - wireguard
+    - wireguard_server
   tags: wireguard
+
+- name: openvpn
+  hosts:
+    - openvpn
+  roles:
+    - openvpn_server
+  tags: openvpn

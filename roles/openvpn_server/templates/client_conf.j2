@@ -1,0 +1,24 @@
+
+client
+tls-client
+pull
+dev tun
+proto {{ openvpn_proto }}
+remote {{ openvpn_server_external_ip }} {{ openvpn_port }} {{ openvpn_proto }}
+
+ca /etc/openvpn/client/ca.crt
+tls-auth /etc/openvpn/client/ta.key 1
+cert /etc/openvpn/client/{{ item }}.crt
+key /etc/openvpn/client/{{ item }}.key
+
+auth SHA512
+
+resolv-retry infinite
+nobind
+user nobody
+group nogroup
+persist-key
+persist-tun
+key-direction 1
+;comp-lzo
+verb 3

@@ -78,5 +78,6 @@
       - "--size=5"
       - "--level=H"
       - "--dpi=36"
+    creates: "{{ ansible_user_dir }}/wireguard-client-configs/{{ item.name }}-client.png"
   with_items: "{{ wireguard_peers }}"
   become: false

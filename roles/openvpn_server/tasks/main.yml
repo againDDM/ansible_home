@@ -1,0 +1,178 @@
+- name: install openvpn
+  apt:
+    pkg:
+    - openvpn
+    - easy-rsa
+    state: latest
+    install_recommends: no
+    update_cache: yes
+  notify:
+    - restart openvpn
+  become: true
+
+- name: sysctl
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  with_dict:
+    net.ipv4.ip_forward: 1
+    net.ipv4.conf.all.rp_filter: 1
+    net.ipv4.conf.default.proxy_arp: 0
+    net.ipv4.conf.default.send_redirects: 1
+    net.ipv4.conf.all.send_redirects: 0
+  become: true
+
+- name: masquerade
+  iptables:
+    table: "nat"
+    chain: "POSTROUTING"
+    out_interface: "{{ ansible_default_ipv4.interface }}"
+    jump: "MASQUERADE"
+    ip_version: "{{ item }}"
+  with_items:
+    - "ipv4"
+    - "ipv6"
+  become: true
+
+- name: ensure /etc/openvpn/easy-rsa exists
+  file:
+    path: /etc/openvpn/easy-rsa
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: easyrsa init-pki
+  command:
+    cmd: "/usr/share/easy-rsa/easyrsa init-pki"
+    chdir: "/etc/openvpn/easy-rsa"
+    creates: "/etc/openvpn/easy-rsa/pki"
+  become: true
+
+- name: easyrsa build-ca
+  command:
+    cmd: "/usr/share/easy-rsa/easyrsa build-ca nopass"
+    chdir: "/etc/openvpn/easy-rsa"
+    creates: "/etc/openvpn/easy-rsa/pki/ca.crt"
+  environment:
+    EASYRSA_BATCH: "yes"
+  become: true
+
+- name: easyrsa gen-dh
+  command:
+    cmd: "/usr/share/easy-rsa/easyrsa gen-dh"
+    chdir: "/etc/openvpn/easy-rsa"
+    creates: "/etc/openvpn/easy-rsa/pki/dh.pem"
+  become: true
+
+- name: easyrsa build-server-full server nopass
+  command:
+    cmd: "/usr/share/easy-rsa/easyrsa build-server-full server nopass"
+    chdir: "/etc/openvpn/easy-rsa"
+    creates: "/etc/openvpn/easy-rsa/pki/issued/server.crt"
+  become: true
+
+- name: easyrsa gen-crl
+  command:
+    cmd: "/usr/share/easy-rsa/easyrsa gen-crl"
+    chdir: "/etc/openvpn/easy-rsa"
+    creates: "/etc/openvpn/easy-rsa/pki/crl.pem"
+  become: true
+
+- name: openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key
+  command:
+    cmd: "openvpn --genkey --secret /etc/openvpn/easy-rsa/pki/ta.key"
+    creates: "/etc/openvpn/easy-rsa/pki/ta.key"
+  become: true
+
+- name: copy server files to /etc/openvpn/server
+  copy:
+    src: "/etc/openvpn/easy-rsa/pki/{{ item }}"
+    dest: "/etc/openvpn/server/{{ item | basename }}"
+    owner: "root"
+    group: "nogroup"
+    mode: "0640"
+    remote_src: true
+  loop:
+    - "ca.crt"
+    - "dh.pem"
+    - "ta.key"
+    - "crl.pem"
+    - "issued/server.crt"
+    - "private/ca.key"
+    - "private/server.key"
+  become: true
+
+- name: "ensure {{ ansible_user_dir }}/openvpn-configs exists"
+  file:
+    path: "{{ ansible_user_dir }}/openvpn-configs"
+    state: "directory"
+    mode: "0755"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  become: false
+
+- name: get blocked lists
+  get_url:
+    url: "{{ item.value }}"
+    dest: "{{ ansible_user_dir }}/openvpn-configs/{{ item.key }}.txt"
+    mode: "0644"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    force: false
+    backup: true
+    timeout: 30
+  with_dict:
+    subnet: "https://antifilter.download/list/subnet.lst"
+    ipsum: "https://antifilter.download/list/ipsum.lst"
+  retries: 3
+  delay: 10
+  become: false
+
+- name: slurp blocked subnet
+  slurp:
+    src: "{{ ansible_user_dir }}/openvpn-configs/subnet.txt"
+  register: blocked_lists_subnet
+
+- name: calculate subnet_content
+  set_fact:
+    subnet_content: "{{ blocked_lists_subnet.content | b64decode }}"
+
+- name: slurp blocked ipsum
+  slurp:
+    src: "{{ ansible_user_dir }}/openvpn-configs/ipsum.txt"
+  register: blocked_lists_ipsum
+
+- name: calculate ipsum_content
+  set_fact:
+    ipsum_content: "{{ blocked_lists_ipsum.content | b64decode }}"
+
+- name: set blocked_lists
+  set_fact:
+    blocked_lists: "{{ subnet_content.split() + ipsum_content.split() }}"
+
+- name: render server config
+  template:
+    src: "server_conf.j2"
+    dest: "/etc/openvpn/server.conf"
+    owner: "root"
+    group: "nogroup"
+    mode: "0640"
+  notify:
+    - restart openvpn
+  become: true
+
+- name: start openvpn
+  systemd:
+    daemon_reload: true
+    enabled: true
+    name: "openvpn@server.service"
+    state: "started"
+  become: true
+
+- name: create clients configs
+  include_tasks: create_client_config.yml
+  with_items: "{{ openvpn_clients }}"

@@ -5,3 +5,6 @@ ansible_become_password: "{{ vault_ansible_become_password }}"
 
 wireguard_server: "{{ vault_wireguard_server }}"
 wireguard_peers: "{{ vault_wireguard_peers }}"
+
+openvpn_subnet: "{{ vault_openvpn_subnet }}"
+openvpn_clients: "{{ vault_openvpn_clients }}"

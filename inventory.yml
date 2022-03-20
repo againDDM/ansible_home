@@ -7,7 +7,12 @@ all:
     home:
       hosts:
         htpc:
-    wireguard:
-      hosts:
-        eh-hol-wg01:
-        gc-war-wg01:
+    vpn_servers:
+      children:
+        wireguard:
+          hosts:
+            eh-hol-wg01:
+            gc-war-wg01:
+        openvpn:
+          hosts:
+            gc-war-wg01:

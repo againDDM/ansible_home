@@ -1,0 +1,48 @@
+
+port {{ openvpn_port }}
+proto {{ openvpn_proto }}
+dev {{ openvpn_dev }}
+dev-type tun
+group nogroup
+
+persist-key
+persist-tun
+tls-server
+tls-timeout 120
+cipher AES-256-CBC
+auth SHA256
+
+dh /etc/openvpn/server/dh.pem
+ca /etc/openvpn/server/ca.crt
+cert /etc/openvpn/server/server.crt
+key /etc/openvpn/server/server.key
+crl-verify /etc/openvpn/server/crl.pem
+tls-auth /etc/openvpn/server/ta.key 0
+
+server {{ openvpn_subnet.network }} {{ openvpn_subnet.mask }}
+ifconfig-pool-persist ipp.txt
+;duplicate-cn
+
+client-to-client
+
+topology subnet
+max-clients {{ openvpn_clients | length }}
+
+route {{ openvpn_subnet.network }} {{ openvpn_subnet.mask }}
+
+;compress lz4-v2
+;push "compress lz4-v2"
+keepalive 10 120
+
+log-append /var/log/openvpn/openvpn-server.log
+verb 3
+mute 5
+explicit-exit-notify 1
+
+{% for dns_server in openvpn_dns_servers %}push "dhcp-option DNS {{ dns_server }}"
+{% endfor %}
+
+;push "redirect-gateway def1 bypass-dhcp"
+{% for subnet in blocked_lists %}
+push "route {{ subnet | ansible.netcommon.ipaddr('network') }} {{ subnet | ansible.netcommon.ipaddr('netmask') }}"
+{% endfor %}
