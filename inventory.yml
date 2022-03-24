@@ -13,6 +13,7 @@ all:
           hosts:
             eh-hol-wg01:
             gc-war-wg01:
+            rv-fra-wg01:
         openvpn:
           hosts:
             gc-war-wg01:
