@@ -6,8 +6,8 @@ services:
   drone:
     image: "drone/drone:{{ drone_drone_image_tag }}"
     environment:
-      DRONE_SERVER_HOST: "drone"
-      DRONE_SERVER_PROTO: "http"
+      DRONE_SERVER_HOST: "{{ drone_server_proxy_host }}"
+      DRONE_SERVER_PROTO: "https"
       DRONE_SERVER_PROXY_HOST: "{{ drone_server_proxy_host }}"
       DRONE_SERVER_PROXY_PROTO: "https"
       DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
@@ -17,6 +17,8 @@ services:
       DRONE_GITHUB_CLIENT_SECRET: "{{ drone_github_client_secret }}"
       DRONE_LOGS_DEBUG: "false"
       DRONE_CRON_DISABLED: "false"
+      DRONE_USER_FILTER: "{{ drone_user_filter }}"
+      DRONE_DATABASE_SECRET: "{{ drone_database_secret }}"
       DRONE_DATABASE_DRIVER: "postgres"
       DRONE_DATABASE_DATASOURCE: "postgres://{{ drone_postgres_user }}:{{ drone_postgres_password }}@db:5432/{{ drone_postgres_db }}?sslmode=disable"
       DRONE_REDIS_CONNECTION: "redis://redis-server:6379"
@@ -36,8 +38,8 @@ services:
   runner:
     image: "drone/drone-runner-docker:{{ drone_runner_image_tag }}"
     environment:
-      DRONE_RPC_HOST: "drone"
-      DRONE_RPC_PROTO: "http"
+      DRONE_RPC_HOST: "{{ drone_server_proxy_host }}"
+      DRONE_RPC_PROTO: "https"
       DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
       DRONE_TMATE_ENABLED: "true"
     volumes:
