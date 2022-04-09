@@ -1,0 +1,22 @@
+---
+
+drone_project_src: "${HOME}/droneci"
+drone_project_name: "droneci"
+
+drone_drone_image_tag: "2-linux-amd64"
+drone_runner_image_tag: "1.8-linux-amd64"
+drone_postgres_image_tag: "14-bullseye"
+drone_redis_image_tag: "6-bullseye"
+
+drone_published_port: 9002
+drone_server_proxy_host: "drone.example.com"
+
+drone_github_client_id: "05136e57d80189bef462"
+drone_github_client_secret: "7c229228a77d2cbddaa61ddc78d45e"
+
+drone_rpc_secret: "622f160975adc21018f527e4b1d9304a"
+drone_cookie_secret: "a51411d003420ef2cd351c0e57ac51ec"
+
+drone_postgres_user: "postgres"
+drone_postgres_password: "postgres"
+drone_postgres_db: "drone"

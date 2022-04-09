@@ -1,4 +1,5 @@
 ---
+
 - name: base
   hosts:
     - all
@@ -6,10 +7,3 @@
   tags: base
   roles:
     - base
-- name: docker
-  hosts:
-    - all
-  become: true
-  tags: docker
-  roles:
-    - docker

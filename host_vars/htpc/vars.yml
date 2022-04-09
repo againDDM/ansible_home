@@ -1,6 +1,14 @@
 ---
+
 ansible_host: 192.168.10.7
 ansible_become_password: "{{ vault_ansible_become_password }}"
+
 minio_address: 192.168.10.7
 minio_access_key: "{{ vault_minio_access_key }}"
 minio_secret_key: "{{ vault_minio_secret_key }}"
+
+drone_github_client_id: "{{ vault_drone_github_client_id }}"
+drone_github_client_secret: "{{ vault_drone_github_client_secret }}"
+drone_server_proxy_host: "{{ vault_drone_server_proxy_host }}"
+drone_rpc_secret: "{{ vault_drone_rpc_secret }}"
+drone_cookie_secret: "{{ vault_drone_cookie_secret }}"
