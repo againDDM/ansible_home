@@ -12,6 +12,7 @@ drone_published_port: 9002
 drone_server_proxy_host: "drone.example.com"
 
 drone_user_filter: "octocat,spaceghost,google,kubernetes"
+drone_user_create: ""
 
 drone_github_client_id: "05136e57d80189bef462"
 drone_github_client_secret: "7c229228a77d2cbddaa61ddc78d45e"

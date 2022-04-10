@@ -18,6 +18,7 @@ services:
       DRONE_LOGS_DEBUG: "false"
       DRONE_CRON_DISABLED: "false"
       DRONE_USER_FILTER: "{{ drone_user_filter }}"
+      DRONE_USER_CREATE: "{{ drone_user_create }}"
       DRONE_DATABASE_SECRET: "{{ drone_database_secret }}"
       DRONE_DATABASE_DRIVER: "postgres"
       DRONE_DATABASE_DATASOURCE: "postgres://{{ drone_postgres_user }}:{{ drone_postgres_password }}@db:5432/{{ drone_postgres_db }}?sslmode=disable"
