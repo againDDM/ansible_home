@@ -35,6 +35,7 @@ services:
         max-file: "3"
     networks:
       - "drone-internal"
+    restart: unless-stopped
 
   runner:
     image: "drone/drone-runner-docker:{{ drone_runner_image_tag }}"
@@ -43,6 +44,8 @@ services:
       DRONE_RPC_PROTO: "https"
       DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
       DRONE_TMATE_ENABLED: "true"
+      DRONE_RUNNER_CAPACITY: "{{ drone_runner_capacity }}"
+      DRONE_RUNNER_NAME: "{{ drone_runner_name }}"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     depends_on:
@@ -54,6 +57,7 @@ services:
         max-file: "3"
     networks:
       - "drone-internal"
+    restart: unless-stopped
 
   redis-server:
     image: "redis:{{ drone_redis_image_tag }}"
@@ -64,6 +68,7 @@ services:
         max-file: "3"
     networks:
       - "drone-internal"
+    restart: unless-stopped
 
   db:
     image: "postgres:{{ drone_postgres_image_tag }}"
@@ -90,6 +95,7 @@ services:
         max-file: "3"
     networks:
       - "drone-internal"
+    restart: unless-stopped
 
 networks:
   drone-internal:

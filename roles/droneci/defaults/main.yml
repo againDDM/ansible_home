@@ -11,6 +11,9 @@ drone_redis_image_tag: "6-bullseye"
 drone_published_port: 9002
 drone_server_proxy_host: "drone.example.com"
 
+drone_runner_name: "default-runner"
+drone_runner_capacity: 1
+
 drone_user_filter: "octocat,spaceghost,google,kubernetes"
 drone_user_create: ""
 
