@@ -1,9 +1,9 @@
 ---
 
-- name: base
+- name: common
   hosts:
     - all
   become: true
-  tags: base
+  tags: common
   roles:
-    - base
+    - common

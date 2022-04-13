@@ -1,0 +1,15 @@
+################################################################################
+# This file is managed by ansible.
+# There is no need to make manual edits to it - they will surely be overwritten.
+################################################################################
+
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+UseDNS no
+PasswordAuthentication no
+PermitRootLogin no
+AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys_generated

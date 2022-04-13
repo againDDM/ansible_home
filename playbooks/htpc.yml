@@ -1,12 +1,12 @@
 ---
 
-- name: base
+- name: common
   hosts:
     - htpc
   become: true
-  tags: base
+  tags: common
   roles:
-    - base
+    - common
 
 - name: docker
   hosts:

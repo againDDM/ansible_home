@@ -1,0 +1,71 @@
+---
+
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+  become: true
+
+- name: render hosts
+  template:
+    src: "hosts.j2"
+    dest: "/etc/hosts"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+    force: yes
+  become: true
+
+- name: update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+  become: true
+
+- name: install common packages
+  apt:
+    pkg: "{{ common_apt_packages }}"
+    state: present
+    install_recommends: no
+    update_cache: no
+  become: true
+
+- name: upgrade pip
+  pip:
+    name: "{{ item }}"
+    extra_args: --upgrade
+  with_items: "{{ common_pip_packages }}"
+
+- name: sudo nopasswd
+  copy:
+    src: sudoers
+    dest: /etc/sudoers
+    validate: /usr/sbin/visudo -csf %s
+  become: true
+
+- name: manage users
+  include_tasks: "manage_user.yml"
+  with_items: "{{ common_users }}"
+
+- name: remove revoked users
+  user:
+    name: "{{ item }}"
+    state: "absent"
+  with_items: "{{ common_revoked_users }}"
+  become: true
+
+- name: journald config change
+  copy:
+    src: journald.conf
+    dest: /etc/systemd/journald.conf
+  become: true
+  notify:
+    - restart_journald
+
+- name: sshd config change
+  copy:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+  become: true
+  notify:
+    - restart_sshd

@@ -1,0 +1,31 @@
+---
+
+- name: "add user {{ item.name }}"
+  user:
+    name: "{{ item.name }}"
+    state: "present"
+    shell: "/bin/bash"
+    append: yes
+    system: no
+    groups: "{{ item.groups }}"
+  become: true
+
+- name: "set ssh authorized_keys for user {{ item.name }}"
+  authorized_key:
+    user: "{{ item.name }}"
+    state: "present"
+    key: "{{ key_item }}"
+  loop_control:
+    loop_var: "key_item"
+  with_items: "{{ item.public_keys }}"
+  become: true
+
+- name: "remove revoked keys for user {{ item.name }}"
+  authorized_key:
+    user: "{{ item.name }}"
+    state: "absent"
+    key: "{{ key_item }}"
+  loop_control:
+    loop_var: "key_item"
+  with_items: "{{ item.revoked_keys }}"
+  become: true

@@ -1,21 +1,11 @@
 ---
 
-- name: base
+- name: common
   hosts:
     - vpn_servers
-  tags: base
-  tasks:
-    - name: set hostname
-      hostname:
-        name: "{{ inventory_hostname }}"
-  become: true
-
-- name: base
-  hosts:
-    - vpn_servers
-  tags: base
+  tags: common
   roles:
-    - base
+    - common
   become: true
 
 - name: wireguard

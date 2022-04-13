@@ -1,0 +1,38 @@
+---
+
+common_apt_packages:
+  - ncdu
+  - htop
+  - ethtool
+  - dnsutils
+  - apache2-utils
+  - iotop
+  - iftop
+  - nmap
+  - zip
+  - whois
+  - net-tools
+  - iperf3
+  - mtr
+  - tmux
+  - curl
+  - wget
+  - wput
+  - gpg-agent
+  - python3-pip
+
+common_pip_packages:
+  - pip
+
+common_users: []
+  # - name: "vpupkin"
+  #   public_keys:
+  #     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2faF+xHy18OVEaWiOGmckhVv7GHyUqJQxK1SP4hzWp"
+  #     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHKBQMwnar85Gyv9gnlTsZe0S8w4iCHZjaG3IBznvxSG"
+  #   revoked_keys:
+  #     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIC6Njby/mE8H3LteXI2WxMuh2TDvsAG5LUFF95T8dDA8"
+  #   groups: "sudo,root"
+
+common_revoked_users: []
+  # - evil
+  # - fired

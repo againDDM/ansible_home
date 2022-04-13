@@ -1,0 +1,15 @@
+---
+
+- name: restart_sshd
+  systemd:
+    daemon_reload: no
+    state: restarted
+    name: "sshd.service"
+  become: true
+
+- name: restart_journald
+  systemd:
+    daemon_reload: no
+    state: restarted
+    name: "systemd-journald.service"
+  become: true
