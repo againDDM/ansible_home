@@ -23,6 +23,13 @@
   roles:
     - nexcloud
 
+- name: gitea
+  hosts:
+    - htpc
+  tags: gitea
+  roles:
+    - gitea
+
 - name: droneci
   hosts:
     - htpc

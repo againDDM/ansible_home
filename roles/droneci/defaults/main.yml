@@ -14,11 +14,11 @@ drone_server_proxy_host: "drone.example.com"
 drone_runner_name: "default-runner"
 drone_runner_capacity: 1
 
-drone_user_filter: "octocat,spaceghost,google,kubernetes"
 drone_user_create: ""
 
-drone_github_client_id: "05136e57d80189bef462"
-drone_github_client_secret: "7c229228a77d2cbddaa61ddc78d45e"
+drone_gitea_server: "https://gitea.example.com/"
+drone_gitea_client_id: "05136e57d80189bef462"
+drone_gitea_client_secret: "7c229228a77d2cbddaa61ddc78d45e"
 
 drone_rpc_secret: "622f160975adc21018f527e4b1d9304a"
 drone_cookie_secret: "a51411d003420ef2cd351c0e57ac51ec"

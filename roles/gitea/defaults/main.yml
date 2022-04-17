@@ -1,0 +1,24 @@
+---
+
+# https://docs.gitea.io/en-us/config-cheat-sheet/
+
+gitea_project_src: "${HOME}/gitea"
+gitea_project_name: "gitea"
+
+gitea_install_lock: "true"
+gitea_disable_registration: "false"
+gitea_secret_key: "5d5469d14f89715c68aef9396212b742" # openssl rand -hex 16
+
+gitea_http_port: 9003
+gitea_root_url: "https://gitea.example.com/"
+
+gitea_gitea_image_tag: "1.16-linux-amd64-rootless"
+gitea_postgres_image_tag: "14-bullseye"
+
+gitea_user_uid: 1000
+gitea_data_host_path: "/opt/gitea"
+gitea_config_host_path: "/etc/gitea"
+
+gitea_postgres_user: "postgres"
+gitea_postgres_password: "postgres"
+gitea_postgres_db: "gitea"

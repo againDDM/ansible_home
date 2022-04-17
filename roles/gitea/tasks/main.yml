@@ -1,0 +1,59 @@
+---
+
+- name: mkdir data and config dirs
+  file:
+    path: "{{ gitea_data_host_path }}"
+    state: directory
+    owner: "{{ gitea_user_uid }}"
+    group: "{{ gitea_user_uid }}"
+    mode: 0755
+  with_items:
+    - "{{ gitea_data_host_path }}"
+    - "{{ gitea_config_host_path }}"
+  become: true
+
+- name: mkdir project
+  file:
+    path: "{{ gitea_project_src }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0700
+
+- name: render docker-compose template
+  template:
+    dest: "{{ gitea_project_src }}/docker-compose.yml"
+    src: "docker-compose.yml.j2"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    validate: "docker-compose -f %s config"
+    mode: 0600
+  register: compose
+
+- name: docker-compose up
+  docker_compose:
+    project_src: "{{ gitea_project_src }}"
+    project_name: "{{ gitea_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: false
+  register: output
+  when:
+    - not compose is changed
+
+- name: docker-compose restart
+  docker_compose:
+    project_src: "{{ gitea_project_src }}"
+    project_name: "{{ gitea_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: true
+  register: output
+  when:
+    - compose is changed
