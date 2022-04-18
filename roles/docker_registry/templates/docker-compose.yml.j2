@@ -1,0 +1,23 @@
+---
+
+version: "3.8"
+
+services:
+  registry:
+    image: "registry:{{ docker_registry_image_tag }}"
+    ports:
+    - "{{ docker_registry_port }}:5000/tcp"
+    environment:
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/{{ docker_registry_password_file_name }}"
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: "/data"
+    volumes:
+      - "{{ docker_registry_auth_path }}:/auth"
+      - "{{ docker_registry_data_path }}:/data"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: "unless-stopped"

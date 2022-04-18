@@ -1,0 +1,78 @@
+---
+
+- name: calculate paths
+  set_fact:
+    docker_registry_data_path: "{{ docker_registry_path }}/data"
+    docker_registry_auth_path: "{{ docker_registry_path }}/auth"
+  become: false
+
+- name: mkdir data and auth dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0750
+    recurse: true
+  with_items:
+    - "{{ docker_registry_data_path }}"
+    - "{{ docker_registry_auth_path }}"
+  become: true
+
+- name: render the password file
+  template:
+    dest: "{{ docker_registry_auth_path }}/{{ docker_registry_password_file_name }}"
+    src: "registry.password.j2"
+    owner: "root"
+    group: "root"
+    mode: 0600
+    force: yes
+  become: true
+
+- name: mkdir project
+  file:
+    path: "{{ docker_registry_project_src }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0700
+  become: false
+
+- name: render docker-compose template
+  template:
+    dest: "{{ docker_registry_project_src }}/docker-compose.yml"
+    src: "docker-compose.yml.j2"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    validate: "docker-compose -f %s config"
+    mode: 0600
+    force: yes
+  register: compose
+
+- name: docker-compose up
+  docker_compose:
+    project_src: "{{ docker_registry_project_src }}"
+    project_name: "{{ docker_registry_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: false
+  register: output
+  when:
+    - not compose is changed
+
+- name: docker-compose restart
+  docker_compose:
+    project_src: "{{ docker_registry_project_src }}"
+    project_name: "{{ docker_registry_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: true
+  register: output
+  when:
+    - compose is changed

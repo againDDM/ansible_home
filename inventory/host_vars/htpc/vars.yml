@@ -26,3 +26,5 @@ gitea_root_url: "{{ vault_gitea_root_url }}"
 gitea_postgres_user: "{{ vault_gitea_postgres_user }}"
 gitea_postgres_password: "{{ vault_gitea_postgres_password }}"
 gitea_postgres_db: "gitea"
+
+docker_registry_passwords: "{{ vault_docker_registry_passwords }}"

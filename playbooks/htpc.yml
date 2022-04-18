@@ -37,6 +37,13 @@
   roles:
     - droneci
 
+- name: registry
+  hosts:
+    - htpc
+  tags: registry
+  roles:
+    - docker_registry
+
 - name: minio
   hosts:
     - htpc

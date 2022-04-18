@@ -1,2 +1,3 @@
-ansible==5.5.0
+ansible>=5.5.0
+passlib>=1.7
 netaddr

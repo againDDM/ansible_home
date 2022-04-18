@@ -1,0 +1,14 @@
+---
+
+docker_registry_image_tag: "2"
+docker_registry_port: 5000
+docker_registry_path: "/opt/registry"
+
+docker_registry_password_file_name: "registry.password"
+
+docker_registry_passwords: {}
+  # user_1_name: "user_1_password"
+  # user_2_name: "user_2_password"
+
+docker_registry_project_src: "${HOME}/registry"
+docker_registry_project_name: "registry"
