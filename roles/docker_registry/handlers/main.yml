@@ -1,0 +1,12 @@
+---
+
+- name: restart
+  docker_compose:
+    project_src: "{{ docker_registry_project_src }}"
+    project_name: "{{ docker_registry_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: true
