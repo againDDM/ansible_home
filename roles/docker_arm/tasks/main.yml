@@ -1,0 +1,52 @@
+---
+
+- name: install packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - docker.io
+      - docker-compose
+      - python3-docker
+    state: present
+    install_recommends: no
+    update_cache: yes
+    cache_valid_time: 86400 # One day
+  become: true
+
+- name: pip install
+  pip:
+    name: "{{ item }}"
+    extra_args: --upgrade
+  with_items:
+    - docker-compose
+    - docker
+
+- name: ensure docker users are added to the docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items: "{{ docker_users }}"
+  become: true
+
+- name: ensure docker_data_root is exists
+  file:
+    path: "{{ docker_data_root }}"
+    state: "directory"
+    owner: "root"
+    group: "root"
+    mode: "0750"
+  become: true
+
+- name: render daemon.json template
+  template:
+    dest: "/etc/docker/daemon.json"
+    src: "daemon.json.j2"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+    force: yes
+  become: true
+  notify:
+    - restart_docker

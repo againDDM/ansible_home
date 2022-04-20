@@ -1,0 +1,65 @@
+---
+
+- name: calculate paths
+  set_fact:
+    prometheus_data_path: "{{ prometheus_path }}/data"
+    prometheus_config_path: "{{ prometheus_path }}/config"
+  become: false
+
+- name: mkdir data and config dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "root"
+    group: "root"
+    mode: 0750
+    recurse: true
+  with_items:
+    - "{{ prometheus_data_path }}"
+    - "{{ prometheus_config_path }}"
+  become: true
+
+- name: render the config file
+  template:
+    dest: "{{ prometheus_config_path }}/prometheus.yml"
+    src: "prometheus.yml.j2"
+    owner: "root"
+    group: "root"
+    mode: 0644
+    force: yes
+  become: true
+  notify:
+    - "restart"
+
+- name: mkdir project
+  file:
+    path: "{{ prometheus_project_src }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0700
+  become: false
+
+- name: render docker-compose template
+  template:
+    dest: "{{ prometheus_project_src }}/docker-compose.yml"
+    src: "docker-compose.yml.j2"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    validate: "docker-compose -f %s config"
+    mode: 0600
+    force: yes
+  register: compose
+  notify:
+    - "restart"
+
+- name: docker-compose up
+  docker_compose:
+    project_src: "{{ prometheus_project_src }}"
+    project_name: "{{ prometheus_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: false

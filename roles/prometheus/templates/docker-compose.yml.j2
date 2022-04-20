@@ -1,0 +1,19 @@
+---
+
+version: "3.8"
+
+services:
+  prometheus:
+    image: "prom/prometheus:{{ prometheus_image_tag }}"
+    user: root
+    ports:
+    - "{{ prometheus_port }}:9090/tcp"
+    volumes:
+      - "{{ prometheus_config_path }}:/etc/prometheus:ro"
+      - "{{ prometheus_data_path }}:/prometheus"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: "unless-stopped"

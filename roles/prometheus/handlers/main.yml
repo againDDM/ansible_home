@@ -1,0 +1,12 @@
+---
+
+- name: restart
+  docker_compose:
+    project_src: "{{ prometheus_project_src }}"
+    project_name: "{{ prometheus_project_name }}"
+    state: present
+    files:
+      - "docker-compose.yml"
+    remove_orphans: yes
+    pull: yes
+    restarted: true

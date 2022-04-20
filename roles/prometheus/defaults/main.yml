@@ -1,0 +1,10 @@
+---
+
+prometheus_image_tag: "main"
+prometheus_port: 9090
+prometheus_path: "/opt/prometheus"
+
+prometheus_project_src: "${HOME}/prometheus"
+prometheus_project_name: "prometheus"
+
+prometheus_scrape_configs: []
