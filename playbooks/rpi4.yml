@@ -1,0 +1,17 @@
+---
+
+- name: common
+  hosts:
+    - rpi4
+  become: true
+  tags: common
+  roles:
+    - common
+
+- name: docker
+  hosts:
+    - rpi4
+  become: true
+  tags: docker
+  roles:
+    - docker_arm

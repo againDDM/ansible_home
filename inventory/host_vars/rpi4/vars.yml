@@ -2,3 +2,6 @@
 
 ansible_host: 192.168.10.9
 ansible_become_password: "{{ vault_ansible_become_password }}"
+
+docker_users:
+  - "{{ ansible_user }}"

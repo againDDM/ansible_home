@@ -1,6 +1,7 @@
 ---
 
 common_apt_packages:
+  - apt-listchanges
   - ncdu
   - htop
   - ethtool

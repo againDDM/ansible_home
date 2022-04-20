@@ -2,3 +2,7 @@
   scm: git
   name: docker
   version: "3.0.0"
+- src: https://github.com/geerlingguy/ansible-role-docker_arm.git
+  scm: git
+  name: docker_arm_raw
+  version: "5.0.0"

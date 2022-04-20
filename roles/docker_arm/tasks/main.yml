@@ -1,0 +1,12 @@
+---
+
+- name: "render docker-compose template"
+  template:
+    dest: "/etc/docker/daemon.json"
+    src: "daemon.json.j2"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  become: true
+  notify:
+    - restart_docker
