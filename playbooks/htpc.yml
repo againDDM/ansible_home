@@ -44,6 +44,13 @@
   roles:
     - docker_registry
 
+- name: prometheus
+  hosts:
+    - htpc
+  tags: prometheus
+  roles:
+    - prometheus
+
 - name: minio
   hosts:
     - htpc

@@ -27,4 +27,6 @@ gitea_postgres_user: "{{ vault_gitea_postgres_user }}"
 gitea_postgres_password: "{{ vault_gitea_postgres_password }}"
 gitea_postgres_db: "gitea"
 
+prometheus_scrape_configs: "{{ vault_prometheus_scrape_configs }}"
+
 docker_registry_passwords: "{{ vault_docker_registry_passwords }}"

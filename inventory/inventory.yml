@@ -1,13 +1,11 @@
 ---
 all:
-  hosts:
-    localhost:
-  vars: {}
   children:
     home:
       hosts:
         htpc:
-        rpi4:
+        rpi3-01:
+        rpi4-01:
     vpn_servers:
       children:
         wireguard:
