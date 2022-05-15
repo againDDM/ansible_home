@@ -1,0 +1,30 @@
+---
+- name: check requirements
+  import_tasks: asserts.yml
+
+- name: rpi_cgroup
+  import_tasks: rpi_cgroup.yml
+  ignore_errors: true
+  when: "ansible_architecture == 'aarch64'"
+
+- name: ping
+  ping: {}
+
+- name: download
+  import_tasks: download.yml
+
+- name: install k3s on master node
+  import_tasks: master.yml
+  when: "'k3s_master' in group_names"
+
+- name: test k3s master
+  assert:
+    that:
+      - "hostvars[groups['k3s_master'][0]]['token'] is defined"
+      - "hostvars[groups['k3s_master'][0]]['k3s_master_is_running'] is true"
+
+- name: install k3s on worker nodes and join them to cluster
+  import_tasks: run.yml
+  when:
+    - "'k3s_cluster' in group_names"
+    - "'k3s_master' not in group_names"

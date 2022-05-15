@@ -1,0 +1,20 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: againDDM
+  description: k3s
+
+  license: MIT
+
+  min_ansible_version: "2.12"
+
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+
+  galaxy_tags:
+    - system
+    - kubernetes
+    - server

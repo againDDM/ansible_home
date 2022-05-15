@@ -1,0 +1,27 @@
+---
+
+- name: run k3s bin
+  import_tasks: run.yml
+
+- name: read node-token from master
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+  become: true
+
+- name: store master node-token
+  set_fact:
+   token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+
+- name: test k3s is running
+  command: k3s kubectl get namespaces
+  become: true
+  changed_when: false
+  register: k3s_is_running_test
+  retries: 10
+  delay: 3
+  ignore_errors: true
+
+- name: store k3s_master_is_running
+  set_fact:
+   k3s_master_is_running: "{{ not k3s_is_running_test.failed }}"

@@ -1,0 +1,37 @@
+---
+- name: render systemd env template
+  template:
+    dest: "/etc/systemd/system/k3s.service.env"
+    src: "k3s.env.j2"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  register: render_env
+
+- name: render systemd service template
+  template:
+    dest: "/etc/systemd/system/k3s.service"
+    src: "k3s.service.j2"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  register: render_service
+
+- name: restart_k3s
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
+    name: "k3s.service"
+  become: true
+  when: render_env is changed or render_service is changed
+
+- name: enable k3s systemd service
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    name: "k3s.service"
+    state: started
+  become: true

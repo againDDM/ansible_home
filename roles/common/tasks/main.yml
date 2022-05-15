@@ -21,7 +21,7 @@
     update_cache: yes
     cache_valid_time: 86400 #One day
   become: true
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: install common packages
   apt:
@@ -30,7 +30,7 @@
     install_recommends: no
     update_cache: no
   become: true
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: upgrade pip
   pip:

@@ -1,0 +1,53 @@
+---
+
+- name: dphys-swapfile swapoff
+  command: dphys-swapfile swapoff
+  become: true
+  when:
+    - ansible_swaptotal_mb > 0
+  ignore_errors: true
+
+- name: disable dphys-swapfile
+  systemd:
+    enabled: no
+    name: "dphys-swapfile"
+  become: true
+  ignore_errors: true
+
+- name: get /boot/cmdline.txt stats
+  slurp:
+    src: /boot/cmdline.txt
+  register: boot_cmd
+  become: true
+
+- name: get current boot_cmd options
+  set_fact:
+    boot_cmd_list: "{{ boot_cmd.content | b64decode | trim | split }}"
+  changed_when:
+    - "'cgroup_memory=1' not in boot_cmd_list"
+    - "'cgroup_enable=memory' not in boot_cmd_list"
+  register: boot_cmd_test
+
+- name: add cgroup_memory=1
+  set_fact:
+    boot_cmd_list: "{{ boot_cmd_list + [ 'cgroup_memory=1', ] }}"
+  when: "'cgroup_memory=1' not in boot_cmd_list"
+
+- name: add cgroup_enable=memory
+  set_fact:
+    boot_cmd_list: "{{ boot_cmd_list + [ 'cgroup_enable=memory', ] }}"
+  when: "'cgroup_enable=memory' not in boot_cmd_list"
+
+- name: write new boot_cmd
+  copy:
+    content: "{{ boot_cmd_list | join(' ') }}"
+    dest: /boot/cmdline.txt
+    force: yes
+  become: true
+  when: boot_cmd_test is changed
+
+- name: reboot
+  reboot:
+    reboot_timeout: 300
+  become: true
+  when: boot_cmd_test is changed

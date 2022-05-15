@@ -1,0 +1,16 @@
+---
+
+- name: test if arch and os are supported
+  assert:
+    that:
+      - ansible_architecture in [ "x86_64", "aarch64" ]
+      - ansible_distribution == "Debian"
+      - ansible_distribution_release == "bullseye"
+    quiet: yes
+
+- name: test if k3s_master defined
+  assert:
+    that:
+      - groups["k3s_master"] is defined
+      - groups["k3s_master"] | length == 1
+    quiet: yes

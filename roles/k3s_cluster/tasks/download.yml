@@ -1,0 +1,31 @@
+---
+- name: download hash
+  uri:
+    url: "{{ k3s_hash_download_url }}"
+    return_content: yes
+    method: "GET"
+    timeout: 20
+  register: hash_response
+  retries: 3
+  delay: 5
+
+- name: calculate k3s binary hash from respose
+  set_fact:
+    k3s_calculated_hash: "{{ hash_response.content | trim | split('\n') | \
+      map('split') | selectattr('1', '==', k3s_bin_uri_slug) | first | first }}"
+
+- name: download k3s binary
+  get_url:
+    url: "{{ k3s_bin_download_url }}"
+    dest: "/usr/bin/k3s"
+    mode: "0755"
+    owner: "root"
+    group: "root"
+    backup: false
+    timeout: 30
+    checksum: "sha256:{{ k3s_calculated_hash }}"
+  retries: 3
+  delay: 15
+  become: true
+  notify:
+    - restart_k3s
