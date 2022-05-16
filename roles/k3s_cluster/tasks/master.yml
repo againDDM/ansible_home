@@ -3,10 +3,16 @@
 - name: run k3s bin
   import_tasks: run.yml
 
+- name: wait
+  pause:
+    seconds: 90
+
 - name: read node-token from master
   slurp:
     src: /var/lib/rancher/k3s/server/node-token
   register: node_token
+  retries: 20
+  delay: 5
   become: true
 
 - name: store master node-token
@@ -18,10 +24,29 @@
   become: true
   changed_when: false
   register: k3s_is_running_test
-  retries: 10
-  delay: 3
+  retries: 3
+  delay: 5
   ignore_errors: true
 
 - name: store k3s_master_is_running
   set_fact:
    k3s_master_is_running: "{{ not k3s_is_running_test.failed }}"
+
+- name: k3s_master_no_schedule
+  command: >-
+    k3s kubectl taint node {{ k3s_node_name }}
+    node-role.kubernetes.io/master:NoSchedule{%
+    if not k3s_master_no_schedule %}-{% endif %}
+  become: true
+  ignore_errors: true
+
+- name: replace cluster server address from localhost to k3s master IP
+  command: >-
+    k3s kubectl config set-cluster default
+      --server=https://{{ ansible_host }}:6443
+  changed_when: true
+  become: true
+  ignore_errors: true
+
+- name: install kubectl
+  import_tasks: kubectl.yml

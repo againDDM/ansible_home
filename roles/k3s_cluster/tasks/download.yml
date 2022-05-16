@@ -1,5 +1,5 @@
 ---
-- name: download hash
+- name: download k3s hash
   uri:
     url: "{{ k3s_hash_download_url }}"
     return_content: yes

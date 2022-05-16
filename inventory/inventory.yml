@@ -19,4 +19,4 @@ all:
           children:
             k3s_master:
               hosts:
-                rpi4-01:
+                htpc:

@@ -1,0 +1,50 @@
+---
+- name: download kubectl hash
+  uri:
+    url: "{{ k3s_kubectl_hash_url }}"
+    return_content: yes
+    method: "GET"
+    timeout: 20
+  register: kubectl_hash_response
+  retries: 3
+  delay: 5
+
+- name: download kubectl binary
+  get_url:
+    url: "{{ k3s_kubectl_download_url }}"
+    dest: "/usr/bin/kubectl"
+    mode: "0755"
+    owner: "root"
+    group: "root"
+    backup: false
+    timeout: 30
+    checksum: "sha256:{{ kubectl_hash_response.content | trim }}"
+  retries: 3
+  delay: 15
+  become: true
+
+- name: kubectl bash completion
+  shell: >-
+    kubectl completion bash >
+    /etc/bash_completion.d/kubectl
+  args:
+    creates: /etc/bash_completion.d/kubectl
+  become: true
+
+- name: enshure ~/.kube exists
+  file:
+    path: .kube
+    state: directory
+    mode: "0700"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: copy config file to user directory
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: .kube/config
+    remote_src: yes
+    mode: "0600"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  become: true
