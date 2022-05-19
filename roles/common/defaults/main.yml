@@ -26,6 +26,8 @@ common_apt_packages:
 common_pip_packages:
   - pip
 
+common_timezone: "UTC"
+
 common_users: []
   # - name: "vpupkin"
   #   public_keys:

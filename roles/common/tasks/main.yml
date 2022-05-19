@@ -5,6 +5,11 @@
     name: "{{ inventory_hostname }}"
   become: true
 
+- name: set timezone
+  community.general.timezone:
+    name: "{{ common_timezone }}"
+  become: true
+
 - name: render hosts
   template:
     src: "hosts.j2"

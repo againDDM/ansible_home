@@ -1,9 +1,0 @@
----
-
-- name: common
-  hosts:
-    - all
-  become: true
-  tags: common
-  roles:
-    - common

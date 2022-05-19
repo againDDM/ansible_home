@@ -6,6 +6,7 @@
     owner: root
     group: root
     mode: "0644"
+    force: true
   become: true
   register: render_env
 
@@ -16,6 +17,7 @@
     owner: root
     group: root
     mode: "0644"
+    force: true
   become: true
   register: render_service
 

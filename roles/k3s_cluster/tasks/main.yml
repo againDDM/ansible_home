@@ -22,6 +22,7 @@
     that:
       - "hostvars[groups['k3s_master'][0]]['token'] is defined"
       - "hostvars[groups['k3s_master'][0]]['k3s_master_is_running'] is true"
+  no_log: true
 
 - name: install k3s on worker nodes and join them to cluster
   import_tasks: run.yml

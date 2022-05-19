@@ -2,3 +2,4 @@
 
 ansible_user: againddm
 common_users: "{{ vault_common_users }}"
+common_timezone: "Europe/Moscow"

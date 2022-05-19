@@ -1,0 +1,94 @@
+---
+
+- name: common
+  hosts:
+    - all
+  become: true
+  tags: common
+  roles:
+    - common
+
+- name: docker
+  hosts:
+    - docker
+  become: true
+  roles:
+    - docker
+  tags:
+    - docker
+    - docker_registry
+    - gitea
+    - droneci
+    - prometheus
+    - nexcloud
+
+- name: registry
+  hosts:
+    - htpc
+  tags: docker_registry
+  roles:
+    - docker_registry
+
+- name: minio
+  hosts:
+    - htpc
+  tags: minio
+  roles:
+    - minio_standalone
+
+- name: k3s_cluster
+  hosts:
+    - k3s_cluster
+  roles:
+    - k3s_cluster
+  tags: k3s_cluster
+
+- name: gitea
+  hosts:
+    - htpc
+  tags: gitea
+  roles:
+    - gitea
+
+- name: droneci
+  hosts:
+    - htpc
+  tags: droneci
+  roles:
+    - droneci
+
+- name: prometheus
+  hosts:
+    - htpc
+  tags: prometheus
+  roles:
+    - prometheus
+
+- name: nexcloud
+  hosts:
+    - htpc
+  tags: nexcloud
+  roles:
+    - nexcloud
+
+- name: iperf
+  hosts:
+    - htpc
+  tags: iperf
+  become: true
+  roles:
+    - iperf3_server
+
+- name: wireguard
+  hosts:
+    - wireguard
+  roles:
+    - wireguard_server
+  tags: wireguard
+
+- name: openvpn
+  hosts:
+    - openvpn
+  roles:
+    - openvpn_server
+  tags: openvpn

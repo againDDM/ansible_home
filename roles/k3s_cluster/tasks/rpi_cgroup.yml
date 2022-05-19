@@ -1,5 +1,17 @@
 ---
 
+- name: install tools
+  apt:
+    pkg:
+      - cgroup-tools
+      - cgroupfs-mount
+      - raspberrypi-kernel-headers
+    state: present
+    install_recommends: no
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+  become: true
+
 - name: dphys-swapfile swapoff
   command: dphys-swapfile swapoff
   become: true
@@ -23,10 +35,17 @@
 - name: get current boot_cmd options
   set_fact:
     boot_cmd_list: "{{ boot_cmd.content | b64decode | trim | split }}"
-  changed_when:
-    - "'cgroup_memory=1' not in boot_cmd_list"
-    - "'cgroup_enable=memory' not in boot_cmd_list"
+  changed_when: >-
+    ('cgroup_memory=1' not in boot_cmd_list)
+    or ('cgroup_enable=memory' not in boot_cmd_list)
+    or ('cgroup_enable=cpuset' not in boot_cmd_list)
+    or ('cgroup_enable=1' not in boot_cmd_list)
   register: boot_cmd_test
+
+- name: add cgroup_enable=1
+  set_fact:
+    boot_cmd_list: "{{ boot_cmd_list + [ 'cgroup_enable=1', ] }}"
+  when: "'cgroup_enable=1' not in boot_cmd_list"
 
 - name: add cgroup_memory=1
   set_fact:
@@ -37,6 +56,11 @@
   set_fact:
     boot_cmd_list: "{{ boot_cmd_list + [ 'cgroup_enable=memory', ] }}"
   when: "'cgroup_enable=memory' not in boot_cmd_list"
+
+- name: add cgroup_enable=cpuset
+  set_fact:
+    boot_cmd_list: "{{ boot_cmd_list + [ 'cgroup_enable=cpuset', ] }}"
+  when: "'cgroup_enable=cpuset' not in boot_cmd_list"
 
 - name: write new boot_cmd
   copy:

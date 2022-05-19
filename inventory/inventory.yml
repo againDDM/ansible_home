@@ -9,8 +9,6 @@ all:
             rv-fra-wg01:
 
     home:
-      hosts:
-        htpc:
       children:
         k3s_cluster:
           hosts:
@@ -20,3 +18,6 @@ all:
             k3s_master:
               hosts:
                 htpc:
+        docker:
+          hosts:
+            htpc:

@@ -29,10 +29,9 @@ ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 {% if 'k3s_master' in group_names %}
-ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} server
+ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} server --snapshotter {{ k3s_snapshotter }}
 {% else %}
 {% set k3s_server_url = 'https://' + hostvars[groups['k3s_master'][0]]['ansible_host'] + ':6443' %}
 {% set k3s_server_token = hostvars[groups['k3s_master'][0]]['token'] %}
-{% set k3s_agent_cmd = '/usr/bin/k3s --data-dir ' + k3s_data_dir + ' agent -s ' + k3s_server_url + ' -t ' + k3s_server_token %}
-ExecStart={{ k3s_agent_cmd }}
+ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} agent -s {{ k3s_server_url }} -t {{ k3s_server_token }} --snapshotter {{ k3s_snapshotter }}
 {% endif %}
