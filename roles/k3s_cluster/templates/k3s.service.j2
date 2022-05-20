@@ -1,5 +1,5 @@
 [Unit]
-Description=Lightweight Kubernetes
+Description=Lightweight Kubernetes {{ k3s_node_arch }}
 Documentation=https://k3s.io
 Wants=network-online.target
 After=network-online.target
@@ -12,6 +12,7 @@ Type=exec
 EnvironmentFile=-/etc/default/%N
 EnvironmentFile=-/etc/sysconfig/%N
 EnvironmentFile=-/etc/systemd/system/k3s.service.env
+SyslogIdentifier=k3s
 User=root
 Group=root
 KillMode=process
@@ -29,9 +30,9 @@ ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 {% if 'k3s_master' in group_names %}
-ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} server --snapshotter {{ k3s_snapshotter }}
+ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} server --snapshotter {{ k3s_snapshotter }} --node-label arch={{ k3s_node_arch }} {% if k3s_master_no_schedule %} --node-taint node-role.kubernetes.io/master:NoSchedule {% endif %}
 {% else %}
 {% set k3s_server_url = 'https://' + hostvars[groups['k3s_master'][0]]['ansible_host'] + ':6443' %}
 {% set k3s_server_token = hostvars[groups['k3s_master'][0]]['token'] %}
-ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} agent -s {{ k3s_server_url }} -t {{ k3s_server_token }} --snapshotter {{ k3s_snapshotter }}
+ExecStart=/usr/bin/k3s --data-dir {{ k3s_data_dir }} agent -s {{ k3s_server_url }} -t {{ k3s_server_token }} --snapshotter {{ k3s_snapshotter }} --node-label arch={{ k3s_node_arch }}
 {% endif %}

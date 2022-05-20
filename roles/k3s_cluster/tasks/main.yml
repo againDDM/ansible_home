@@ -29,3 +29,8 @@
   when:
     - "'k3s_cluster' in group_names"
     - "'k3s_master' not in group_names"
+
+- name: install longhorn
+  import_tasks: longhorn.yml
+  when:
+   - k3s_longhorn_install

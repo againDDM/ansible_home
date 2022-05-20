@@ -1,0 +1,26 @@
+---
+
+- name: install open-iscsi
+  apt:
+    pkg:
+      - open-iscsi
+    state: present
+    install_recommends: no
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+  become: true
+
+- name: install longhorn
+  get_url:
+    url: "https://raw.githubusercontent.com/longhorn/longhorn/master/deploy/longhorn.yaml"
+    dest: "{{ k3s_manifests_dir }}/longhorn.yaml"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+    backup: false
+    timeout: 30
+  retries: 3
+  delay: 15
+  become: true
+  when:
+   - "'k3s_master' in group_names"

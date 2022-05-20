@@ -37,10 +37,13 @@
 
 - name: k3s_master_no_schedule
   command: >-
-    k3s kubectl taint --overwrite node {{ k3s_node_name }}
-    node-role.kubernetes.io/master:NoSchedule{%
-    if not k3s_master_no_schedule %}-{% endif %}
+    k3s kubectl taint
+    node {{ k3s_node_name }}
+    node-role.kubernetes.io/master:NoSchedule-
+  failed_when: false
   become: true
+  when:
+    - not k3s_master_no_schedule
 
 - name: replace cluster server address from localhost to k3s master IP
   command: >-

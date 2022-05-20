@@ -1,5 +1,4 @@
 ---
-
 - name: test if arch and os are supported
   assert:
     that:
