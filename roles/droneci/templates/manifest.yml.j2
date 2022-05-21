@@ -76,11 +76,11 @@ spec:
         image: "drone/drone-runner-kube:{{ drone_k3s_runner_image_tag }}"
         resources:
           limits:
-            cpu: "200m"
+            cpu: "400m"
             memory: "128Mi"
           requests:
             cpu: "100m"
-            memory: "32Mi"
+            memory: "8Mi"
         ports:
         - containerPort: 3000
         env:
