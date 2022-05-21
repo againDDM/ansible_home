@@ -1,0 +1,102 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "{{ drone_k3s_runner_namespace }}"
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: "{{ drone_k3s_runner_namespace }}"
+  name: drone
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/log
+  verbs:
+  - get
+  - create
+  - delete
+  - list
+  - watch
+  - update
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: drone
+  namespace: "{{ drone_k3s_runner_namespace }}"
+subjects:
+- kind: ServiceAccount
+  name: "{{ drone_k3s_runner_namespace }}"
+  namespace: "{{ drone_k3s_runner_namespace }}"
+roleRef:
+  kind: Role
+  name: drone
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone
+  namespace: "{{ drone_k3s_runner_namespace }}"
+  labels:
+    app.kubernetes.io/name: drone
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: drone
+      kubernetes.io/arch: arm64
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: drone
+        kubernetes.io/arch: arm64
+    spec:
+      containers:
+      - name: runner
+        image: "drone/drone-runner-kube:{{ drone_k3s_runner_image_tag }}"
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "128Mi"
+          requests:
+            cpu: "100m"
+            memory: "32Mi"
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DRONE_RUNNER_NAME
+          value: "{{ drone_k3s_runner_name }}"
+        - name: DRONE_RPC_HOST
+          value: "{{ drone_server_proxy_host }}"
+        - name: DRONE_RPC_PROTO
+          value: "https"
+        - name: DRONE_RPC_SECRET
+          value: "{{ drone_rpc_secret }}"
+        - name: DRONE_NAMESPACE_DEFAULT
+          value: "{{ drone_k3s_runner_namespace }}"
+        - name: DRONE_NODE_SELECTOR_DEFAULT
+          value: "kubernetes.io/arch: arm64"
+        - name: DRONE_RUNNER_CAPACITY
+          value: "{{ drone_k3s_runner_capacity }}"
+        - name: DRONE_UI_DISABLE
+          value: "true"

@@ -4,15 +4,22 @@ drone_project_src: "${HOME}/droneci"
 drone_project_name: "droneci"
 
 drone_drone_image_tag: "2-linux-amd64"
-drone_runner_image_tag: "1.8-linux-amd64"
 drone_postgres_image_tag: "14-bullseye"
 drone_redis_image_tag: "6-bullseye"
 
 drone_published_port: 9002
 drone_server_proxy_host: "drone.example.com"
 
-drone_runner_name: "default-runner"
-drone_runner_capacity: 1
+drone_docker_runner_deploy: true
+drone_docker_runner_image_tag: "1.8-linux-amd64"
+drone_docker_runner_name: "default-runner"
+drone_docker_runner_capacity: 1
+
+drone_k3s_runner_deploy: true
+drone_k3s_runner_namespace: "drone-ci-runtime"
+drone_k3s_runner_image_tag: "linux-arm64"
+drone_k3s_runner_name: "k3s-runner"
+drone_k3s_runner_capacity: 2
 
 drone_user_create: ""
 

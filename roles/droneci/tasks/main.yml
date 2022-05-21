@@ -44,3 +44,18 @@
   register: output
   when:
     - compose is changed
+
+- name: deploy runner in k3s
+  template:
+    dest: "{{ k3s_data_dir | default('/var/lib/rancher/k3s') }}/server/manifests/droneci.yaml"
+    src: "manifest.yml.j2"
+    owner: "root"
+    group: "root"
+    validate: "k3s kubectl apply --validate=true --dry-run=client --filename=%s"
+    mode: "0644"
+    backup: no
+    force: yes
+  become: true
+  when:
+    - drone_k3s_runner_deploy
+    - "'k3s_master' in group_names"

@@ -19,7 +19,7 @@ drone_rpc_secret: "{{ vault_drone_rpc_secret }}"
 drone_cookie_secret: "{{ vault_drone_cookie_secret }}"
 
 gitea_install_lock: "false"
-gitea_disable_registration: "false"
+gitea_disable_registration: "true"
 gitea_secret_key: "{{ vault_gitea_secret_key }}"
 gitea_http_port: 9003
 gitea_root_url: "{{ vault_gitea_root_url }}"

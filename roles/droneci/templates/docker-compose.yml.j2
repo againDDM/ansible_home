@@ -38,15 +38,17 @@ services:
       - "drone-internal"
     restart: unless-stopped
 
+{% if drone_docker_runner_deploy %}
   runner:
-    image: "drone/drone-runner-docker:{{ drone_runner_image_tag }}"
+    image: "drone/drone-runner-docker:{{ drone_docker_runner_image_tag }}"
     environment:
       DRONE_RPC_HOST: "{{ drone_server_proxy_host }}"
       DRONE_RPC_PROTO: "https"
       DRONE_RPC_SECRET: "{{ drone_rpc_secret }}"
       DRONE_TMATE_ENABLED: "true"
-      DRONE_RUNNER_CAPACITY: "{{ drone_runner_capacity }}"
-      DRONE_RUNNER_NAME: "{{ drone_runner_name }}"
+      DRONE_UI_DISABLE: "true"
+      DRONE_RUNNER_CAPACITY: "{{ drone_docker_runner_capacity }}"
+      DRONE_RUNNER_NAME: "{{ drone_docker_runner_name }}"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     depends_on:
@@ -59,6 +61,7 @@ services:
     networks:
       - "drone-internal"
     restart: unless-stopped
+{% endif %}
 
   redis-server:
     image: "redis:{{ drone_redis_image_tag }}"
