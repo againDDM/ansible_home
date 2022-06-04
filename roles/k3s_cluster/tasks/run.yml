@@ -1,11 +1,21 @@
 ---
+
+- name: enshure /etc/rancher/k3s exists
+  file:
+    path: /etc/rancher/k3s
+    state: directory
+    mode: "0700"
+    owner: "root"
+    group: "root"
+  become: true
+
 - name: render systemd env template
   template:
     dest: "/etc/systemd/system/k3s.service.env"
     src: "k3s.env.j2"
     owner: root
     group: root
-    mode: "0644"
+    mode: "0600"
     force: true
   become: true
   register: render_env
@@ -16,7 +26,18 @@
     src: "k3s.service.j2"
     owner: root
     group: root
-    mode: "0644"
+    mode: "0600"
+    force: true
+  become: true
+  register: render_service
+
+- name: render registries.yaml template
+  template:
+    dest: "/etc/rancher/k3s/registries.yaml"
+    src: "registries.yaml.j2"
+    owner: root
+    group: root
+    mode: "0600"
     force: true
   become: true
   register: render_service

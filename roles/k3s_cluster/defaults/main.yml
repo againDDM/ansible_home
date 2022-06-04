@@ -5,3 +5,7 @@ k3s_node_name: "{{ inventory_hostname }}"
 k3s_master_no_schedule: no
 k3s_snapshotter: "overlayfs"
 k3s_longhorn_install: false
+
+# https://rancher.com/docs/k3s/latest/en/installation/private-registry/
+k3s_registry_mirrors: {}
+k3s_registry_configs: {}
