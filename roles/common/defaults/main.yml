@@ -15,6 +15,7 @@ common_apt_packages:
   - net-tools
   - iperf3
   - sqlite3
+  - tcpdump
   - mtr
   - tmux
   - curl
