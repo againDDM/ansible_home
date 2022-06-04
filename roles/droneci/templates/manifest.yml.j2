@@ -39,7 +39,7 @@ metadata:
   namespace: "{{ drone_k3s_runner_namespace }}"
 subjects:
 - kind: ServiceAccount
-  name: "{{ drone_k3s_runner_namespace }}"
+  name: "default"
   namespace: "{{ drone_k3s_runner_namespace }}"
 roleRef:
   kind: Role
@@ -95,7 +95,7 @@ spec:
         - name: DRONE_NAMESPACE_DEFAULT
           value: "{{ drone_k3s_runner_namespace }}"
         - name: DRONE_NODE_SELECTOR_DEFAULT
-          value: "kubernetes.io/arch: arm64"
+          value: "kubernetes.io/arch:arm64"
         - name: DRONE_RUNNER_CAPACITY
           value: "{{ drone_k3s_runner_capacity }}"
         - name: DRONE_UI_DISABLE
