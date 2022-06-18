@@ -1,10 +1,12 @@
 ---
-k3s_version: "v1.23.6"
+k3s_version: "v1.24.1"
 k3s_data_dir: "/var/lib/rancher/k3s"
 k3s_node_name: "{{ inventory_hostname }}"
 k3s_master_no_schedule: no
 k3s_snapshotter: "overlayfs"
+k3s_helm_version: "v3.9.0"
 k3s_longhorn_install: false
+k3s_prometheus_install: true
 
 # https://rancher.com/docs/k3s/latest/en/installation/private-registry/
 k3s_registry_mirrors: {}

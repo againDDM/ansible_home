@@ -19,7 +19,7 @@ _k3s_hash_arch_slugs:
 k3s_node_arch: "{{ _k3s_hash_arch_slugs[ansible_architecture] }}"
 
 k3s_hash_download_url: "\
-  https://github.com/k3s-io/k3s/releases/download/v1.23.6%2Bk3s1/\
+  https://github.com/k3s-io/k3s/releases/download/{{ k3s_version }}%2Bk3s1/\
   sha256sum-{{ k3s_node_arch }}.txt"
 
 k3s_kubectl_download_url: "\
@@ -28,3 +28,8 @@ k3s_kubectl_download_url: "\
   {{ k3s_node_arch }}/kubectl"
 
 k3s_kubectl_hash_url: "{{ k3s_kubectl_download_url }}.sha256"
+
+k3s_helm_hash_download_url: "\
+  https://get.helm.sh/helm-{{ k3s_helm_version }}-linux-{{ k3s_node_arch }}.tar.gz.sha256sum"
+k3s_helm_download_url: "\
+  https://get.helm.sh/helm-{{ k3s_helm_version }}-linux-{{ k3s_node_arch }}.tar.gz"

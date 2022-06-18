@@ -1,0 +1,74 @@
+---
+
+- name: install tar
+  apt:
+    pkg:
+      - tar
+    state: present
+    install_recommends: no
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+  become: true
+
+- name: download helm hash
+  uri:
+    url: "{{ k3s_helm_hash_download_url }}"
+    return_content: yes
+    method: "GET"
+    timeout: 20
+  register: helm_hash_response
+  retries: 3
+  delay: 5
+
+- name: calculate helm binary hash from respose
+  set_fact:
+    helm_calculated_hash: "{{ helm_hash_response.content | trim | split | first }}"
+
+- name: make unpack directory
+  file:
+    path: ".ansible/helm-unpack"
+    state: "directory"
+    recurse: yes
+    mode: "0755"
+    owner: "root"
+    group: "root"
+  become: true
+
+- name: download helm.tar.gz
+  get_url:
+    url: "{{ k3s_helm_download_url }}"
+    dest: ".ansible/helm-unpack/helm.tar.gz"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+    backup: false
+    timeout: 30
+    checksum: "sha256:{{ helm_calculated_hash }}"
+  retries: 3
+  delay: 15
+  register: helm_tar_download
+  become: true
+
+- name: untar helm
+  command: "tar -C .ansible/helm-unpack -xvzf .ansible/helm-unpack/helm.tar.gz"
+  become: true
+  when:
+    - helm_tar_download is changed
+
+- name: put helm binary to path directory
+  copy:
+    src: ".ansible/helm-unpack/linux-{{ k3s_node_arch }}/helm"
+    dest: "/usr/bin/helm"
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: yes
+  become: true
+  when:
+    - helm_tar_download is changed
+
+- name: clean unpack directory
+  file:
+    path: ".ansible/helm-unpack/linux-{{ k3s_node_arch }}"
+    state: "absent"
+  become: true    

@@ -55,3 +55,6 @@
 
 - name: install kubectl
   import_tasks: kubectl.yml
+
+- name: install helm
+  import_tasks: helm.yml
