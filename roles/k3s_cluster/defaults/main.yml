@@ -6,7 +6,7 @@ k3s_master_no_schedule: no
 k3s_snapshotter: "overlayfs"
 k3s_helm_version: "v3.9.0"
 k3s_longhorn_install: false
-k3s_prometheus_install: true
+k3s_prometheus_install: false
 
 # https://rancher.com/docs/k3s/latest/en/installation/private-registry/
 k3s_registry_mirrors: {}
