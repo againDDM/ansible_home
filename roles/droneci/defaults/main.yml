@@ -17,6 +17,8 @@ drone_docker_runner_capacity: 1
 
 drone_k3s_runner_deploy: true
 drone_k3s_runner_namespace: "drone-ci-runtime"
+drone_k3s_runner_resource_request_memory: "1GiB"
+drone_k3s_runner_resource_request_cpu: "500"
 drone_k3s_runner_image_tag: "linux-arm64"
 drone_k3s_runner_name: "k3s-runner"
 drone_k3s_runner_capacity: 2

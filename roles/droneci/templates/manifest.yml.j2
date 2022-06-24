@@ -94,6 +94,10 @@ spec:
           value: "{{ drone_rpc_secret }}"
         - name: DRONE_NAMESPACE_DEFAULT
           value: "{{ drone_k3s_runner_namespace }}"
+        - name: DRONE_RESOURCE_REQUEST_MEMORY
+          value: "{{ drone_k3s_runner_resource_request_memory }}"
+        - name: DRONE_RESOURCE_REQUEST_CPU
+          value: "{{ drone_k3s_runner_resource_request_cpu }}"
         - name: DRONE_NODE_SELECTOR_DEFAULT
           value: "kubernetes.io/arch:arm64"
         - name: DRONE_RUNNER_CAPACITY
