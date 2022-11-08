@@ -7,6 +7,7 @@ all:
         wireguard:
           hosts:
             rv-fra-wg01:
+            rv-fra-wg02:
 
     home:
       children:
