@@ -31,9 +31,9 @@ services:
     restart: unless-stopped
     tty: true
     oom_kill_disable: false
-    mem_limit: "{{ nexcloud_memory_limit_mb }}M"
+    mem_limit: "{{ nextcloud_memory_limit_mb }}M"
     volumes:
-      - "{{ nexcloud_data_host_path }}:/var/www/html:rw"
+      - "{{ nextcloud_data_host_path }}:/var/www/html:rw"
     environment:
       POSTGRES_HOST: "{{ postgres_host }}"
       POSTGRES_DB: "{{ postgres_db }}"

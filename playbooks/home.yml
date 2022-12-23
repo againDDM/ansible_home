@@ -20,7 +20,7 @@
     - gitea
     - droneci
     - prometheus
-    - nexcloud
+    - nextcloud
 
 - name: registry
   hosts:
@@ -64,12 +64,12 @@
   roles:
     - prometheus
 
-- name: nexcloud
+- name: nextcloud
   hosts:
     - htpc
-  tags: nexcloud
+  tags: nextcloud
   roles:
-    - nexcloud
+    - nextcloud
 
 - name: iperf
   hosts:

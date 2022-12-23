@@ -1,11 +1,11 @@
 ---
-project_name: nexcloud
-project_src: $HOME/nexcloud
+project_name: nextcloud
+project_src: $HOME/nextcloud
 application_container_name: nextcloud_application
-nextcloud_version: 21-apache
+nextcloud_version: 24-apache
 nextcloud_external_port: 65080
-nexcloud_data_host_path: /media/whiteHDD/HDD-cloud
-nexcloud_memory_limit_mb: 1024
+nextcloud_data_host_path: /media/whiteHDD/HDD-cloud
+nextcloud_memory_limit_mb: 1024
 postgres_container_name: nextcloud_database
 postgres_version: 12
 pgdata_container_path: /var/lib/postgresql/data
