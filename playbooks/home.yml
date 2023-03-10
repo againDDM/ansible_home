@@ -8,12 +8,17 @@
   roles:
     - common
 
+- name: nginx
+  hosts:
+    - nginx
+  tags: nginx
+  roles:
+    - nginx
+
 - name: docker
   hosts:
     - docker
   become: true
-  roles:
-    - docker
   tags:
     - docker
     - docker_registry
@@ -21,6 +26,8 @@
     - droneci
     - prometheus
     - nextcloud
+  roles:
+    - docker
 
 - name: registry
   hosts:

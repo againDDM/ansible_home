@@ -1,0 +1,63 @@
+---
+
+- name: install nginx
+  apt:
+    pkg:
+      - nginx-full
+    state: present
+    install_recommends: no
+    update_cache: no
+  become: true
+  notify:
+    - restart_nginx
+
+- name: remove default nginx config
+  file:
+    path: "/etc/nginx/sites-available/"
+    state: absent
+  become: true
+
+- name: render main nginx config
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+    owner: "root"
+    group: "root"
+    validate: "nginx -tc %s"
+    force: yes
+    backup: no
+  become: true
+  notify:
+    - reload_nginx
+
+- name: render stats nginx config
+  template:
+    src: nginx-stats.conf.j2
+    dest: "/etc/nginx/conf.d/stats.conf"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+    validate: "sh -c 'nginx -t && echo %s'"
+    force: yes
+    backup: no
+  become: true
+  notify:
+    - reload_nginx
+  when:
+    - nginx_metrics_port is defined
+
+
+- name: render static nginx config
+  template:
+    src: nginx-static.conf.j2
+    dest: "/etc/nginx/sites-enabled/static.conf"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+    validate: "sh -c 'nginx -t && echo %s'"
+    force: yes
+    backup: no
+  become: true
+  notify:
+    - reload_nginx
