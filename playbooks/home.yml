@@ -36,13 +36,6 @@
   roles:
     - docker_registry
 
-- name: minio
-  hosts:
-    - htpc
-  tags: minio
-  roles:
-    - minio_standalone
-
 - name: k3s_cluster
   hosts:
     - k3s_cluster
@@ -63,13 +56,6 @@
   tags: droneci
   roles:
     - droneci
-
-- name: prometheus
-  hosts:
-    - htpc
-  tags: prometheus
-  roles:
-    - prometheus
 
 - name: nextcloud
   hosts:
