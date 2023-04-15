@@ -1,6 +1,7 @@
 ---
 
 common_apt_packages:
+  - sudo
   - apt-listchanges
   - ncdu
   - htop

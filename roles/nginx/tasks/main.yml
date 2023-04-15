@@ -47,7 +47,6 @@
   when:
     - nginx_metrics_port is defined
 
-
 - name: render static nginx config
   template:
     src: nginx-static.conf.j2
@@ -61,3 +60,6 @@
   become: true
   notify:
     - reload_nginx
+  when:
+    - nginx_static_vs_configs is defined
+    - (nginx_static_vs_configs|length>0)
