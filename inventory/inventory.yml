@@ -13,11 +13,9 @@ all:
       children:
         k3s_cluster:
           hosts:
-            rpi4-01:
           children:
             k3s_master:
               hosts:
-                rpi4-01:
         docker:
           hosts:
             htpc:

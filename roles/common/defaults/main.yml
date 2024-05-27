@@ -23,6 +23,8 @@ common_apt_packages:
   - wput
   - gpg-agent
   - python3-pip
+  - python3-venv
+  - python3-dev
 
 common_pip_packages:
   - pip

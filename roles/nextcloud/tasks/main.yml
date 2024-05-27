@@ -1,4 +1,15 @@
 ---
+
+- name: install apt packages
+  apt:
+    pkg:
+      - docker-compose
+    state: present
+    install_recommends: no
+    update_cache: no
+  become: true
+  ignore_errors: true
+
 - name: mkdir project
   file:
     path: "{{ project_src }}"
@@ -17,6 +28,20 @@
     mode: 0600
   register: compose
 
+- name: Docker-compose stop
+  docker_compose:
+    project_src: "{{ project_src }}"
+    project_name: "{{ project_name }}"
+    state: absent
+    files:
+      - docker-compose.yaml
+    remove_orphans: yes
+    pull: yes
+    restarted: false
+  register: output
+  when:
+    - compose is changed
+
 - name: Docker-compose UP
   docker_compose:
     project_src: "{{ project_src }}"
@@ -25,22 +50,6 @@
     files:
       - docker-compose.yaml
     remove_orphans: yes
-    pull: yes
+    pull: no
     restarted: false
   register: output
-  when:
-    - not compose is changed
-
-- name: Docker-compose restart
-  docker_compose:
-    project_src: "{{ project_src }}"
-    project_name: "{{ project_name }}"
-    state: present
-    files:
-      - docker-compose.yaml
-    remove_orphans: yes
-    pull: yes
-    restarted: true
-  register: output
-  when:
-    - compose is changed

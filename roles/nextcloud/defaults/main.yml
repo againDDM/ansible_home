@@ -1,8 +1,8 @@
 ---
 project_name: nextcloud
-project_src: $HOME/nextcloud
+project_src: ~/nextcloud
 application_container_name: nextcloud_application
-nextcloud_version: 25-apache
+nextcloud_version: 29-apache
 nextcloud_external_port: 65080
 nextcloud_data_host_path: /media/whiteHDD/HDD-cloud
 nextcloud_memory_limit_mb: 1024
