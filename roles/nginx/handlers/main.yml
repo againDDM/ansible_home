@@ -1,0 +1,12 @@
+---
+
+- name: restart_nginx
+  systemd:
+    daemon_reload: true
+    state: "restarted"
+    name: "nginx.service"
+  become: true
+
+- name: reload_nginx
+  shell: "nginx -t && nginx -s reload"
+  become: true

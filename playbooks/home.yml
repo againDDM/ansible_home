@@ -8,12 +8,17 @@
   roles:
     - common
 
+- name: nginx
+  hosts:
+    - nginx
+  tags: nginx
+  roles:
+    - nginx
+
 - name: docker
   hosts:
     - docker
   become: true
-  roles:
-    - docker
   tags:
     - docker
     - docker_registry
@@ -21,6 +26,8 @@
     - droneci
     - prometheus
     - nextcloud
+  roles:
+    - docker
 
 - name: registry
   hosts:
@@ -28,13 +35,6 @@
   tags: docker_registry
   roles:
     - docker_registry
-
-- name: minio
-  hosts:
-    - htpc
-  tags: minio
-  roles:
-    - minio_standalone
 
 - name: k3s_cluster
   hosts:
@@ -56,13 +56,6 @@
   tags: droneci
   roles:
     - droneci
-
-- name: prometheus
-  hosts:
-    - htpc
-  tags: prometheus
-  roles:
-    - prometheus
 
 - name: nextcloud
   hosts:

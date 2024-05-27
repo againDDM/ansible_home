@@ -1,0 +1,13 @@
+################################################################################
+# This file is managed by ansible.
+# There is no need to make manual edits to it - they will surely be overwritten.
+################################################################################
+
+server {
+    listen 127.0.0.1:{{ proxy_metrics_port }};
+    listen [::1]:{{ proxy_metrics_port }};
+
+    location = /basic_status {
+        stub_status;
+    }
+}

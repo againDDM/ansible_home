@@ -3,6 +3,11 @@
 ansible_host: 192.168.10.7
 ansible_become_password: "{{ vault_ansible_become_password }}"
 
+nginx_static_vs_configs:
+  - alias: /media/whiteHDD/HDD-media/
+    location: /
+    autoindex: yes
+
 minio_address: 192.168.10.7
 minio_access_key: "{{ vault_minio_access_key }}"
 minio_secret_key: "{{ vault_minio_secret_key }}"

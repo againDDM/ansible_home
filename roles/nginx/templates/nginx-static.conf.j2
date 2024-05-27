@@ -1,0 +1,26 @@
+################################################################################
+# This file is managed by ansible.
+# There is no need to make manual edits to it - they will surely be overwritten.
+################################################################################
+
+server_tokens off;
+
+server {
+    listen 80 default_server;
+    listen [::]:80;
+    charset UTF-8;
+{% for item in nginx_static_vs_configs %}
+    location {{ item.location }} {
+        alias {{ item.alias }};
+{% if item.autoindex %}
+        autoindex on;
+        autoindex_exact_size off;
+        autoindex_format html;
+        autoindex_localtime off;
+{% else %}
+        autoindex off;
+        try_files $uri $uri/ =404;
+{% endif %}
+    }
+{% endfor %}
+}

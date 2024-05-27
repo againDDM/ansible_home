@@ -12,10 +12,13 @@ all:
     home:
       children:
         k3s_cluster:
-          hosts:
+          hosts: {}
           children:
             k3s_master:
-              hosts:
+              hosts: {}
         docker:
+          hosts:
+            htpc:
+        nginx:
           hosts:
             htpc:

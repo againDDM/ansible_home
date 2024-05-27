@@ -1,0 +1,11 @@
+---
+
+nginx_keepalive_timeout: 65
+nginx_worker_connections: 768
+nginx_types_hash_max_size: 2048
+nginx_static_vs_configs : []
+  # - alias: /var/www/app/static/
+  #   location: /
+  #   autoindex: no
+
+# nginx_metrics_port: 8000
