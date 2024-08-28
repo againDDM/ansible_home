@@ -3,6 +3,7 @@
     pkg:
       - wireguard
       - wireguard-tools
+      - iptables
       - qrencode
     state: latest
     install_recommends: no

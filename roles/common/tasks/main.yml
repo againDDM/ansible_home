@@ -42,6 +42,7 @@
     name: "{{ item }}"
     extra_args: --upgrade
   with_items: "{{ common_pip_packages }}"
+  ignore_errors: true
 
 - name: sudo nopasswd
   copy:

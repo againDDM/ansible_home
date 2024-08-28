@@ -4,7 +4,11 @@
   systemd:
     daemon_reload: no
     state: restarted
-    name: "sshd.service"
+    name: "{{ item }}"
+  with_items:
+    - "sshd.service"
+    - "ssh.service"
+  ignore_errors: true
   become: true
 
 - name: restart_journald
