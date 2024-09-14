@@ -6,8 +6,11 @@ all:
       children:
         wireguard:
           hosts:
-            rv-fra-wg01:
             rv-fra-wg02:
+        openvpn: {}
+        openconnect:
+          hosts:
+            rv-fra-oc01:
 
     home:
       children:
@@ -19,6 +22,7 @@ all:
         docker:
           hosts:
             htpc:
+            rv-fra-oc01:
         nginx:
           hosts:
             htpc:

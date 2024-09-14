@@ -26,9 +26,12 @@ common_apt_packages:
   - python3-pip
   - python3-venv
   - python3-dev
+  - git
+  - make
+  - gcc
+  - g++
 
-common_pip_packages:
-  - pip
+common_pip_packages: []
 
 common_timezone: "UTC"
 

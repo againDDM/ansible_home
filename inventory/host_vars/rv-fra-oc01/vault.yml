@@ -1,0 +1,50 @@
+---
+
+vault_ansible_host: 185.172.130.184
+vault_ansible_become_password: pro100pass
+
+vault_openconnect_server:
+
+vault_wireguard_server:
+  external_ip: "{{ vault_ansible_host }}"
+  interface_name: wg0
+  address4: 192.168.9.1
+  mask4: 24
+  address6: fd42:42:42::1
+  mask6: 64
+  port: 63665
+  private_key: "CEaKiAgwuf5492Mpi8jnTSracHE/Sqpjed5taCU24lM="
+  public_key: "nQMO6y+KCuIdFP2hT4odMiMECw0r+Xc0xx6KAbSISzE="
+
+# ( wg genkey | tee private.key | wg pubkey > public.key ) && cat private.key public.key
+vault_wireguard_peers:
+  - name: keenetic
+    address4: 192.168.9.2
+    address6: fd42:42:42::2
+    private_key: "IOr4dTNM4YYn2I8YBoGklzOMnLgaUILDsLjfbfbZk3U="
+    public_key: "H3+pRLMbDQo2Lo3JYW8DWWxS6eMU8dmVFIGgR3Q58k8="
+  - name: poco
+    address4: 192.168.9.3
+    address6: fd42:42:42::3
+    private_key: "AJvx3IESy5gVZzfpYg4BpOwN9TIQEgNMefgIIHnkJ0I="
+    public_key: "LOwso4mh+f2ICPohefyq3ov5WE3TA4szXQ7DMz+fpno="
+  - name: redme
+    address4: 192.168.9.4
+    address6: fd42:42:42::4
+    private_key: "oGpxKnQDYL0JBeImAe3+nKRmkTOZHM4Rnc1SCNVaqHc="
+    public_key: "Ug6LNqoWhhY9VyoS0IW3fWC/lBnuJEBayQm84Fepv0g="
+  - name: macpro
+    address4: 192.168.9.5
+    address6: fd42:42:42::5
+    private_key: "sFMva7GChbUA4VHGgOcm+hzgiISZuwqo5V9NHPYg228="
+    public_key: "AgE8NcOWiu1cZS8PAFyOER/tJfK0gUoOcJd5VwIAz3w="
+  - name: desktop
+    address4: 192.168.9.6
+    address6: fd42:42:42::6
+    private_key: "qIhSL+AkQeoMse4Ga9zfXsijfHVb2JVX2BeAedmRa3E="
+    public_key: "BIsBVLjRz1wM/yuxhIUD1u0ApoWwCfI/38GlBrWn7y8="
+  - name: workdell
+    address4: 192.168.9.7
+    address6: fd42:42:42::7
+    private_key: "aLvc2EpkR4p5mDifqi7BLzpDCA/NtA4z6NT+JJWlWlU="
+    public_key: "ydO8vyAQ1qaq/auu6KpwMLEVOF0w7FPDIbHuE7j5JF8="

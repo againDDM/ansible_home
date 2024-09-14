@@ -26,6 +26,7 @@
     - droneci
     - prometheus
     - nextcloud
+    - openconnect
   roles:
     - docker
 
