@@ -1,0 +1,38 @@
+amneziawg_clients:
+  client-1:
+    private_key: null
+    preshared_key: null
+    address: null
+    dns:
+      - "8.8.8.8"
+      - "8.8.4.4"
+    mtu: 1420
+    persistent_keepalive: 15
+    allowed_ips:
+      - "0.0.0.0/0"
+      - "::/0"
+
+amneziawg_params:
+  subnets:
+    ipv4: "10.20.30.0/24"
+    ipv6: null
+
+  server:
+    private_key: null
+    address: null
+    endpoint: null
+    listen_port: 51820
+    mtu: 1420
+
+  dpi_bypass:
+    jc: null
+    jmin: null
+    jmax: null
+    s1: null
+    s2: null
+    h1: null
+    h2: null
+    h3: null
+    h4: null
+
+amneziawg_export_clients: false

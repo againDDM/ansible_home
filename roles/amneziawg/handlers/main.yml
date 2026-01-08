@@ -1,0 +1,4 @@
+- name: restart amneziawg
+  systemd:
+    name:  awg-quick@server
+    state: restarted

@@ -18,7 +18,7 @@
   register: compose
 
 - name: docker-compose up
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ drone_project_src }}"
     project_name: "{{ drone_project_name }}"
     state: present
@@ -32,7 +32,7 @@
     - not compose is changed
 
 - name: docker-compose restart
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ drone_project_src }}"
     project_name: "{{ drone_project_name }}"
     state: present

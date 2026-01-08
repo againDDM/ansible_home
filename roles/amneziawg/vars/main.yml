@@ -1,0 +1,28 @@
+amneziawg_config_path: /etc/amnezia/amneziawg
+# Ubuntu
+amneziawg_ubuntu_ppa: "ppa:amnezia/ppa"
+
+# Debian / Ubuntu PPA via Launchpad
+amneziawg_lp_baseurl: "https://ppa.launchpadcontent.net/amnezia/ppa/ubuntu"
+amneziawg_lp_key_url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x57290828"
+amneziawg_lp_keyring: "/usr/share/keyrings/amneziawg-archive-keyring.gpg"
+
+amneziawg_lp_release: "{{ ansible_distribution_release if ansible_distribution == 'Ubuntu' else 'focal' }}"
+
+amneziawg_lp_repo: >
+  deb [signed-by={{ amneziawg_lp_keyring }}]
+  {{ amneziawg_lp_baseurl }}
+  {{ amneziawg_lp_release }} main
+
+amneziawg_lp_repo_src: >
+  deb-src [signed-by={{ amneziawg_lp_keyring }}]
+  {{ amneziawg_lp_baseurl }}
+  {{ amneziawg_lp_release }} main
+
+# Packages
+amneziawg_prerequisites:
+  - python3-launchpadlib
+  - gnupg
+  - "linux-headers-{{ ansible_kernel }}"
+
+amneziawg_export_path: "/tmp/amneziawg-clients/{{ ansible_host }}/"

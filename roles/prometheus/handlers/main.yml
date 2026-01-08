@@ -1,7 +1,7 @@
 ---
 
 - name: restart
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ prometheus_project_src }}"
     project_name: "{{ prometheus_project_name }}"
     state: present

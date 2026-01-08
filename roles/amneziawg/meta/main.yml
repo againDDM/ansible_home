@@ -1,0 +1,11 @@
+galaxy_info:
+  role_name: amneziawg
+  author: your_name
+  description: AmneziaWG server role (best practices 2024+)
+  license: MIT
+  min_ansible_version: "2.13"
+  platforms:
+    - name: Ubuntu
+      versions: ["focal", "jammy", "noble"]
+    - name: Debian
+      versions: ["bullseye", "bookworm", "trixie"]

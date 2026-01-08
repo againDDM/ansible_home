@@ -1,0 +1,27 @@
+[Interface]
+PrivateKey = {{ client.private_key }}
+Address = {{ client.address | join(",") }}
+{% if client.dns %}
+DNS = {{ client.dns | join(",") }}
+{% endif %}
+MTU = {{ client.mtu | default(1420) }}
+{% if params.common.dpi_bypass %}
+# ===== DPI BYPASS =====
+Jc = {{ params.common.dpi_bypass.jc }}
+Jmin = {{ params.common.dpi_bypass.jmin }}
+Jmax = {{ params.common.dpi_bypass.jmax }}
+S1 = {{ params.common.dpi_bypass.s1 }}
+S2 = {{ params.common.dpi_bypass.s2 }}
+H1 = {{ params.common.dpi_bypass.h1 }}
+H2 = {{ params.common.dpi_bypass.h2 }}
+H3 = {{ params.common.dpi_bypass.h3 }}
+H4 = {{ params.common.dpi_bypass.h4 }}
+{% endif %}
+[Peer]
+PublicKey = {{ params.server.public_key }}
+{% if client.preshared_key is defined and client.preshared_key %}
+PresharedKey = {{ client.preshared_key }}
+{% endif %}
+Endpoint = {{ params.server.endpoint | default(ansible_host) }}:{{ params.server.listen_port }}
+AllowedIPs = {{ client.allowed_ips | join(",") }}
+PersistentKeepalive = {{ client.persistent_keepalive | default(0) }}

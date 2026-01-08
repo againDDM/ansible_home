@@ -6,9 +6,7 @@
     state: restarted
     name: "{{ item }}"
   with_items:
-    - "sshd.service"
     - "ssh.service"
-  ignore_errors: true
   become: true
 
 - name: restart_journald

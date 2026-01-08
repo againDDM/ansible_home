@@ -1,0 +1,12 @@
+- name: Ensure Debian-based OS
+  assert:
+    that:
+      - ansible_os_family == "Debian"
+    fail_msg: >
+      amneziawg role supports only Debian-based systems.
+      Detected: {{ ansible_distribution }} ({{ ansible_os_family }})
+
+- name: Ensure apt is available
+  assert:
+    that:
+      - ansible_pkg_mgr == "apt"

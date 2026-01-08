@@ -1,0 +1,24 @@
+- name: Ensure keyring directory exists
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Amnezia PPA key
+  get_url:
+    url: "{{ amneziawg_lp_key_url }}"
+    dest: "{{ amneziawg_lp_keyring }}"
+    mode: "0644"
+  register: amneziawg_key
+
+- name: Add Amnezia binary repository
+  apt_repository:
+    repo: "{{ amneziawg_lp_repo }}"
+    filename: amneziawg
+    state: present
+
+- name: Add Amnezia source repository
+  apt_repository:
+    repo: "{{ amneziawg_lp_repo_src }}"
+    filename: amneziawg
+    state: present

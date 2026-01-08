@@ -29,7 +29,7 @@
   register: compose
 
 - name: Docker-compose stop
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ project_src }}"
     project_name: "{{ project_name }}"
     state: absent
@@ -43,7 +43,7 @@
     - compose is changed
 
 - name: Docker-compose UP
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ project_src }}"
     project_name: "{{ project_name }}"
     state: present

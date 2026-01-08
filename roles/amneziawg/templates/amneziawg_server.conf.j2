@@ -1,0 +1,48 @@
+[Interface]
+ListenPort = {{ params.server.listen_port }}
+Address = {{ params.server.address | join(",") }}
+PrivateKey = {{ params.server.private_key }}
+
+# ===== DPI BYPASS =====
+{% if params.common.dpi_bypass %}
+Jc = {{ params.common.dpi_bypass.jc }}
+Jmin = {{ params.common.dpi_bypass.jmin }}
+Jmax = {{ params.common.dpi_bypass.jmax }}
+S1 = {{ params.common.dpi_bypass.s1 }}
+S2 = {{ params.common.dpi_bypass.s2 }}
+H1 = {{ params.common.dpi_bypass.h1 }}
+H2 = {{ params.common.dpi_bypass.h2 }}
+H3 = {{ params.common.dpi_bypass.h3 }}
+H4 = {{ params.common.dpi_bypass.h4 }}
+{% endif %}
+
+# ===== NAT / FORWARD =====
+{% set iface = ansible_default_ipv4.interface %}
+
+{% if params.subnets.ipv4 %}
+PreUp = nft add table ip wg-nat 2>/dev/null || true; nft add chain ip wg-nat postrouting '{ type nat hook postrouting priority srcnat; }' 2>/dev/null || true; nft add chain ip wg-nat forward '{ type filter hook forward priority 0; policy drop; }' 2>/dev/null || true
+
+PostUp = nft add rule ip wg-nat forward ct state related,established accept; nft add rule ip wg-nat forward iif %i accept; nft add rule ip wg-nat forward oif %i tcp flags syn tcp option maxseg size set rt mtu; nft add rule ip wg-nat postrouting ip saddr {{ params.subnets.ipv4 }} oif {{ iface }} masquerade
+
+PostDown = nft flush table ip wg-nat
+{% endif %}
+
+{% if params.subnets.ipv6 %}
+PreUp = nft add table ip6 wg-nat 2>/dev/null || true; nft add chain ip6 wg-nat postrouting '{ type nat hook postrouting priority srcnat; }' 2>/dev/null || true; nft add chain ip6 wg-nat forward '{ type filter hook forward priority 0; policy drop; }' 2>/dev/null || true
+
+PostUp = nft add rule ip6 wg-nat forward ct state related,established accept; nft add rule ip6 wg-nat forward iif %i accept; nft add rule ip6 wg-nat forward oif %i tcp flags syn tcp option maxseg size set rt mtu; nft add rule ip6 wg-nat postrouting ip6 saddr {{ params.subnets.ipv6 }} oif {{ iface }} masquerade
+
+PostDown = nft flush table ip6 wg-nat
+{% endif %}
+
+{% for name, client in params.clients.items() %}
+[Peer] # {{ name }}
+PublicKey = {{ client.public_key }}
+{% if client.preshared_key is defined %}
+PresharedKey = {{ client.preshared_key }}
+{% endif %}
+AllowedIPs = {{ client.address | join(",") }}
+{% if client.persistent_keepalive is defined %}
+PersistentKeepalive = {{ client.persistent_keepalive }}
+{% endif %}
+{% endfor %}

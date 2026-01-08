@@ -54,7 +54,7 @@
     - "restart"
 
 - name: docker-compose up
-  docker_compose:
+  community.docker.docker_compose_v2:
     project_src: "{{ docker_registry_project_src }}"
     project_name: "{{ docker_registry_project_name }}"
     state: present

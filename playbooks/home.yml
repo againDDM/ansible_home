@@ -76,13 +76,7 @@
 - name: wireguard
   hosts:
     - wireguard
+  become: true
   roles:
-    - wireguard_server
+    - amneziawg
   tags: wireguard
-
-- name: openvpn
-  hosts:
-    - openvpn
-  roles:
-    - openvpn_server
-  tags: openvpn

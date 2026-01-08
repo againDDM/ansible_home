@@ -1,0 +1,17 @@
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: true
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.d/99-amneziawg.conf
+
+- name: Enable IPv6 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    sysctl_set: true
+    state: present
+    reload: yes
+    sysctl_file: /etc/sysctl.d/99-amneziawg.conf

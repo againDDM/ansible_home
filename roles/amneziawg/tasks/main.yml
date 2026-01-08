@@ -1,0 +1,115 @@
+- name: Preflight checks
+  import_tasks: preflight.yml
+
+- name: Install prerequisites
+  apt:
+    name: "{{ amneziawg_prerequisites }}"
+    state: present
+    update_cache: yes
+
+# =========================
+# Ubuntu
+# =========================
+
+- name: Add Amnezia PPA (Ubuntu)
+  apt_repository:
+    repo: "{{ amneziawg_ubuntu_ppa }}"
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+# =========================
+# Debian
+# =========================
+
+- name: Configure Amnezia PPA on Debian
+  import_tasks: debian_ppa.yml
+  when: ansible_distribution == "Debian"
+
+# =========================
+# Install
+# =========================
+
+- name: Install amneziawg
+  apt:
+    update_cache: yes
+    name: amneziawg
+    state: present
+
+- name: Ensure config directory exists
+  file:
+    path: "{{ amneziawg_config_path }}"
+    state: directory
+    mode: "0700"
+
+- name: Generate AmneziaWG JSON configuration
+  amneziawg_config:
+    clients: "{{ amneziawg_clients }}"
+    params: "{{ amneziawg_params }}"
+    path: "{{ amneziawg_config_path }}"
+    force: false
+  no_log: true
+  register: amneziawg_config_result
+
+- name: Render server config
+  vars:
+    params: "{{ amneziawg_config_result }}"
+  template:
+    src: amneziawg_server.conf.j2
+    dest: "{{ amneziawg_config_path }}/server.conf"
+    mode: "0600"
+  no_log: true
+  notify: restart amneziawg
+
+- name: Render client configs (on server)
+  vars:
+    params: "{{ amneziawg_config_result }}"
+    client: "{{ item.value }}"
+  template:
+    src: amneziawg_client.conf.j2
+    dest: "{{ amneziawg_config_path }}/{{ item.key }}.conf"
+    mode: "0600"
+  loop: "{{ amneziawg_config_result.clients | dict2items }}"
+  no_log: true
+
+- name: Configure kernel forwarding (IPv4/IPv6)
+  include_tasks: sysctl.yml
+
+- name: Enable and start AmneziaWG
+  systemd:
+    name: awg-quick@server
+    enabled: true
+    state: started
+
+- name: Ensure export directory exists (localhost)
+  file:
+    path: "{{ amneziawg_export_path }}"
+    mode: '0777'
+    state: directory
+  delegate_to: localhost
+  when: amneziawg_export_clients
+
+- name: Fetch client configs
+  fetch:
+    src: "{{ amneziawg_config_path }}/{{ item.key }}.conf"
+    dest: "{{ amneziawg_export_path }}/"
+    flat: true
+  no_log: true
+  loop: "{{ amneziawg_config_result.clients | dict2items }}"
+  when: amneziawg_export_clients
+
+- name: Generate QR codes
+  command: "qrencode -t png -o {{ item.key }}.png < {{ item.key }}.conf"
+  args:
+    chdir: "{{ amneziawg_export_path }}"
+  loop: "{{ amneziawg_config_result.clients | dict2items }}"
+  no_log: true
+  delegate_to: localhost
+  when: amneziawg_export_clients
+
+- name: Create ZIP archive
+  archive:
+    path: "{{ amneziawg_export_path }}"
+    dest: "{{ amneziawg_export_path }}.zip"
+  no_log: true
+  delegate_to: localhost
+  when: amneziawg_export_clients
