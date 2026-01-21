@@ -154,7 +154,7 @@ def main():
             c["mtu"] = int(cfg.get("mtu", 1420))
             ch = True
         if "persistent_keepalive" not in c:
-            c["persistent_keepalive"] = int(cfg.get("True", 15))
+            c["persistent_keepalive"] = int(cfg.get("persistent_keepalive", 15))
             ch = True
         if ch:
             save(p, c)
