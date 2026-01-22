@@ -1,0 +1,6 @@
+---
+- name: restart sing-box
+  systemd:
+    name: sing-box
+    state: restarted
+    enabled: yes

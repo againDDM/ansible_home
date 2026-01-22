@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Browser diagnostics</title>
+<style>
+body { font-family: monospace; background: #0b1020; color: #e5e5e5; padding: 20px; }
+h1 { color: #7aa2f7; }
+pre { background: #111827; padding: 15px; border-radius: 8px; overflow-x: auto; }
+</style>
+</head>
+<body>
+<h1>Browser diagnostics</h1>
+<p>This page displays basic information about your browser and environment.</p>
+<pre id="out">Loading...</pre>
+<script>
+function getData() {
+  return {
+    userAgent: navigator.userAgent,
+    language: navigator.language,
+    languages: navigator.languages,
+    platform: navigator.platform,
+    hardwareConcurrency: navigator.hardwareConcurrency,
+    deviceMemory: navigator.deviceMemory || null,
+    cookieEnabled: navigator.cookieEnabled,
+    doNotTrack: navigator.doNotTrack,
+    screen: { width: screen.width, height: screen.height, colorDepth: screen.colorDepth, pixelRatio: window.devicePixelRatio },
+    viewport: { width: window.innerWidth, height: window.innerHeight },
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timestamp: new Date().toISOString()
+  };
+}
+document.getElementById("out").textContent = JSON.stringify(getData(), null, 2);
+</script>
+</body>
+</html>

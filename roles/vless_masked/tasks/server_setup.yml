@@ -1,0 +1,43 @@
+- name: Install packages
+  apt:
+    name:
+      - nginx-extras
+      - certbot
+      - python3-certbot-nginx
+      - curl
+    update_cache: yes
+
+- name: Install sing-box
+  shell: curl -fsSL https://sing-box.app/deb-install.sh | bash
+  args:
+    creates: /usr/bin/sing-box
+
+- name: Create fake site dir
+  file:
+    path: /var/www/fake
+    state: directory
+
+- name: Deploy fake site
+  copy:
+    src: index.html
+    dest: /var/www/fake/index.html
+
+- name: Obtain TLS cert
+  shell: certbot --nginx -n --agree-tos -m {{ vless_masked_email }} -d {{ vless_masked_domain }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ vless_masked_domain }}"
+
+- name: Configure nginx
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-enabled/{{ vless_masked_domain }}
+
+- name: Remove default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Reload nginx
+  systemd:
+    name: nginx
+    state: reloaded

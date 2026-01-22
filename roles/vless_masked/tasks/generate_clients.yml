@@ -1,0 +1,49 @@
+
+- name: Ensure client config dir exists
+  file:
+    path: "{{ vless_masked_client_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Generate missing client parameters
+  set_fact:
+    vless_masked_clients: >-
+      {{
+        vless_masked_clients | dict2items
+        | map('combine',
+            {
+              'value': (
+                item.value | default({})
+                | combine({
+                    'uuid': (lookup('password','/dev/null length=32 chars=hex') if (item.value.uuid is not defined or item.value.uuid == None) else item.value.uuid),
+                    'ws_path': ("/ws-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.ws_path is not defined or item.value.ws_path == None) else item.value.ws_path),
+                    'h2_path': ("/h2-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.h2_path is not defined or item.value.h2_path == None) else item.value.h2_path),
+                    'grpc_service': ("grpc-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.grpc_service is not defined or item.value.grpc_service == None) else item.value.grpc_service)
+                  })
+              )
+            }) | items2dict
+      }}
+  loop: "{{ vless_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+
+- name: Generate client configs for each client
+  template:
+    src: client.json.j2
+    dest: "{{ vless_masked_client_dir }}/{{ item.key }}.json"
+    mode: "0644"
+  loop: "{{ vless_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  vars:
+    client_uuid: "{{ item.value.uuid }}"
+    client_ws_path: "{{ item.value.ws_path }}"
+    client_h2_path: "{{ item.value.h2_path }}"
+    client_grpc_service: "{{ item.value.grpc_service }}"
+
+- name: Generate sing-box server config with all clients
+  template:
+    src: singbox_multi_clients.json.j2
+    dest: /etc/sing-box/config.json
+  notify:
+    - restart sing-box
