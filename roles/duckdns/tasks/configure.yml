@@ -1,0 +1,33 @@
+- name: Create script directory
+  file:
+    path: "{{ duckdns_home }}/bin"
+    state: directory
+    owner: "{{ duckdns_user }}"
+    group: "{{ duckdns_user }}"
+    mode: "0750"
+
+- name: Install DuckDNS update script
+  template:
+    src: duckdns.sh.j2
+    dest: "{{ duckdns_home }}/bin/duckdns.sh"
+    owner: "{{ duckdns_user }}"
+    group: "{{ duckdns_user }}"
+    mode: "0700"
+
+- name: Install systemd service
+  template:
+    src: duckdns.service.j2
+    dest: /etc/systemd/system/duckdns.service
+  notify: reload systemd
+
+- name: Install systemd timer
+  template:
+    src: duckdns.timer.j2
+    dest: /etc/systemd/system/duckdns.timer
+  notify: reload systemd
+
+- name: Enable and start timer
+  systemd:
+    name: duckdns.timer
+    enabled: yes
+    state: started

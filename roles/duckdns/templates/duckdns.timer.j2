@@ -1,0 +1,10 @@
+[Unit]
+Description=DuckDNS update every {{ duckdns_update_interval }}
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec={{ duckdns_update_interval }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

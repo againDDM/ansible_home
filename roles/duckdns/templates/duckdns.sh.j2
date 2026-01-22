@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOG="{{ duckdns_home }}/duckdns.log"
+
+curl -fsS \
+  "https://www.duckdns.org/update?domains={{ duckdns_domains }}&token={{ duckdns_token }}&ip=" \
+  >> "$LOG"

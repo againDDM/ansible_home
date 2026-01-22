@@ -1,0 +1,10 @@
+[Unit]
+Description=DuckDNS Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User={{ duckdns_user }}
+Group={{ duckdns_user }}
+ExecStart={{ duckdns_home }}/bin/duckdns.sh

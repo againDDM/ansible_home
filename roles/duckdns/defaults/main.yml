@@ -1,0 +1,7 @@
+duckdns_user: duckdns
+duckdns_home: /var/lib/duckdns
+
+duckdns_domains: ""
+duckdns_token: ""
+
+duckdns_update_interval: 5min

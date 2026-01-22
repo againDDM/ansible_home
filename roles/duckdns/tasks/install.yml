@@ -1,0 +1,12 @@
+- name: Install curl
+  package:
+    name: curl
+    state: present
+
+- name: Create duckdns user
+  user:
+    name: "{{ duckdns_user }}"
+    home: "{{ duckdns_home }}"
+    shell: /usr/sbin/nologin
+    system: yes
+    create_home: yes

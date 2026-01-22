@@ -1,0 +1,13 @@
+- name: Validate DuckDNS configuration
+  assert:
+    that:
+      - duckdns_domains | length > 0
+      - duckdns_token | length > 0
+    fail_msg: |
+      DuckDNS is not configured.
+      You must set:
+        duckdns_domains
+        duckdns_token
+
+- import_tasks: install.yml
+- import_tasks: configure.yml
