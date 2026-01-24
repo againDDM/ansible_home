@@ -14,15 +14,6 @@
       "transport": { "type": "ws", "path": "{{ client_ws_path }}" }
     },
     {
-      "tag": "h2",
-      "type": "vless",
-      "server": "{{ vless_masked_domain }}",
-      "server_port": 443,
-      "uuid": "{{ client_uuid }}",
-      "tls": { "enabled": true, "server_name": "{{ vless_masked_domain }}" },
-      "transport": { "type": "http", "path": "{{ client_h2_path }}" }
-    },
-    {
       "tag": "grpc",
       "type": "vless",
       "server": "{{ vless_masked_domain }}",
@@ -34,7 +25,7 @@
     {
       "type": "urltest",
       "tag": "auto",
-      "outbounds": [ "ws", "h2", "grpc" ],
+      "outbounds": [ "ws", "grpc" ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "30s",
       "tolerance": 100

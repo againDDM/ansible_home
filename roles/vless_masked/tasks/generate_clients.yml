@@ -17,7 +17,6 @@
                 | combine({
                     'uuid': (lookup('password','/dev/null length=32 chars=hex') if (item.value.uuid is not defined or item.value.uuid == None) else item.value.uuid),
                     'ws_path': ("/ws-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.ws_path is not defined or item.value.ws_path == None) else item.value.ws_path),
-                    'h2_path': ("/h2-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.h2_path is not defined or item.value.h2_path == None) else item.value.h2_path),
                     'grpc_service': ("grpc-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.grpc_service is not defined or item.value.grpc_service == None) else item.value.grpc_service)
                   })
               )
@@ -38,7 +37,6 @@
   vars:
     client_uuid: "{{ item.value.uuid }}"
     client_ws_path: "{{ item.value.ws_path }}"
-    client_h2_path: "{{ item.value.h2_path }}"
     client_grpc_service: "{{ item.value.grpc_service }}"
 
 - name: Generate sing-box server config with all clients

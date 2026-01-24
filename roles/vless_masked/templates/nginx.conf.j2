@@ -8,28 +8,30 @@ server {
     root /var/www/fake;
     index index.html;
 
-    location / { try_files $uri $uri/ =404; }
+    # По умолчанию открывается index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 
-    location /ws- { proxy_pass http://127.0.0.1:{{ vless_masked_singbox_port }}; proxy_http_version 1.1; proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection "upgrade"; proxy_set_header Host $host; }
-    location /h2- { proxy_pass http://127.0.0.1:{{ vless_masked_singbox_port | int + 1 }}; proxy_http_version 2; proxy_set_header Host $host; }
-    location /grpc- { grpc_pass grpc://127.0.0.1:{{ vless_masked_singbox_port | int + 2 }}; grpc_set_header Host $host; }
+    # Health check
+    location /ping {
+        access_log off;
+        default_type text/plain;
+        return 200 "pong\n";
+    }
 
-    location /api/trace {
-        default_type application/json;
-        content_by_lua_block {
-            local cjson = require "cjson"
-            local data = {
-                ip = ngx.var.remote_addr,
-                port = ngx.var.remote_port,
-                scheme = ngx.var.scheme,
-                http_version = ngx.req.http_version(),
-                tls = ngx.var.https == "on",
-                user_agent = ngx.var.http_user_agent,
-                server_name = ngx.var.server_name,
-                request_time = ngx.var.request_time,
-                time = ngx.time()
-            }
-            ngx.say(cjson.encode(data))
-        }
+    # VLESS WebSocket
+    location /ws- {
+        proxy_pass http://127.0.0.1:{{ vless_masked_singbox_port }};
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+
+    # VLESS gRPC (реальный HTTP/2)
+    location /grpc- {
+        grpc_pass grpc://127.0.0.1:{{ vless_masked_singbox_port | int + 2 }};
+        grpc_set_header Host $host;
     }
 }

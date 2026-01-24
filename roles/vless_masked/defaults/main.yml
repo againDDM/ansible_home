@@ -6,25 +6,4 @@ vless_masked_clients:
   client1:
     uuid: null
     ws_path: null
-    h2_path: null
-    grpc_service: null
-  client2:
-    uuid: null
-    ws_path: null
-    h2_path: null
-    grpc_service: null
-  client3:
-    uuid: null
-    ws_path: null
-    h2_path: null
-    grpc_service: null
-  client4:
-    uuid: null
-    ws_path: null
-    h2_path: null
-    grpc_service: null
-  client5:
-    uuid: null
-    ws_path: null
-    h2_path: null
     grpc_service: null

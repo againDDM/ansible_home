@@ -12,13 +12,6 @@
     {
       "type": "vless",
       "listen": "0.0.0.0",
-      "listen_port": {{ vless_masked_singbox_port | int + 1 }},
-      "users": [ { "uuid": "{{ item.value.uuid }}" } ],
-      "transport": { "type": "http", "path": "{{ item.value.h2_path }}" }
-    },
-    {
-      "type": "vless",
-      "listen": "0.0.0.0",
       "listen_port": {{ vless_masked_singbox_port | int + 2 }},
       "users": [ { "uuid": "{{ item.value.uuid }}" } ],
       "transport": { "type": "grpc", "service_name": "{{ item.value.grpc_service }}" }
