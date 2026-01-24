@@ -14,8 +14,9 @@ pre { background: #111827; padding: 15px; border-radius: 8px; overflow-x: auto; 
 <p>This page displays basic information about your browser and environment.</p>
 <pre id="out">Loading...</pre>
 <script>
-function getData() {
-  return {
+async function getData() {
+  // Данные о браузере
+  const browserData = {
     userAgent: navigator.userAgent,
     language: navigator.language,
     languages: navigator.languages,
@@ -29,8 +30,27 @@ function getData() {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     timestamp: new Date().toISOString()
   };
+
+  // Попытка получить данные с Lua-эндпоинта
+  let serverData = null;
+  try {
+    const response = await fetch('/client-info', { cache: "no-store" });
+    if (response.ok) {
+      serverData = await response.json();
+    } else {
+      serverData = { error: `Server returned status ${response.status}` };
+    }
+  } catch (err) {
+    serverData = { error: err.message };
+  }
+
+  // Объединяем данные
+  return { browser: browserData, server: serverData };
 }
-document.getElementById("out").textContent = JSON.stringify(getData(), null, 2);
+
+getData().then(data => {
+  document.getElementById("out").textContent = JSON.stringify(data, null, 2);
+});
 </script>
 </body>
 </html>

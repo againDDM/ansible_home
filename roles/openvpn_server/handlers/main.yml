@@ -1,8 +1,0 @@
----
-
-- name: restart openvpn
-  systemd:
-    daemon_reload: true
-    state: "restarted"
-    name: "openvpn@server.service"
-  become: true

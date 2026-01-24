@@ -2,6 +2,10 @@
   apt:
     name:
       - nginx-extras
+      - libnginx-mod-http-lua
+      - lua5.4
+      - lua-json
+      - lua-cjson
       - certbot
       - python3-certbot-nginx
       - curl
@@ -16,26 +20,71 @@
   file:
     path: /var/www/fake
     state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: true
 
 - name: Deploy fake site
   copy:
     src: index.html
     dest: /var/www/fake/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Create lua dir
+  file:
+    path: /etc/nginx/lua/
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: true
+
+- name: Deploy lua
+  copy:
+    src: client_info.lua
+    dest: /etc/nginx/lua/client_info.lua
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Create letsencrypt dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: true
+  loop:
+    - /var/www/fake/.well-known/acme-challenge
+    - /var/www
+
+- name: Copy initial nginx configure
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/sites-enabled/default
+
+- name: Reload nginx
+  systemd:
+    name: nginx
+    state: reloaded
 
 - name: Obtain TLS cert
-  shell: certbot --nginx -n --agree-tos -m {{ vless_masked_email }} -d {{ vless_masked_domain }}
-  args:
-    creates: "/etc/letsencrypt/live/{{ vless_masked_domain }}"
+  shell: >
+    certbot certonly --webroot
+    -w /var/www/fake
+    -d {{ vless_masked_domain }}
+    --email {{ vless_masked_email }}
+    --agree-tos
+    --non-interactive
 
 - name: Configure nginx
   template:
     src: nginx.conf.j2
     dest: /etc/nginx/sites-enabled/{{ vless_masked_domain }}
-
-- name: Remove default nginx site
-  file:
-    path: /etc/nginx/sites-enabled/default
-    state: absent
 
 - name: Reload nginx
   systemd:

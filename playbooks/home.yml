@@ -80,3 +80,13 @@
   roles:
     - amneziawg
   tags: wireguard
+
+- name:
+  hosts:
+    - vless
+  tags:
+    - vless
+  roles:
+    - duckdns
+    - vless_masked
+  become: true

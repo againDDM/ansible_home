@@ -7,8 +7,10 @@ all:
       children:
         wireguard:
           hosts:
-            rv-fra-oc01:
-
+            rv-fra-vpn01:
+        vless:
+          hosts:
+            rv-fra-vpn01:
     home:
       children:
         k3s_cluster:
