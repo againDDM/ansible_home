@@ -4,14 +4,14 @@
   {% for item in vless_masked_clients | dict2items %}
     {
       "type": "vless",
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "listen_port": {{ vless_masked_singbox_port }},
       "users": [ { "uuid": "{{ item.value.uuid }}" } ],
       "transport": { "type": "ws", "path": "{{ item.value.ws_path }}" }
     },
     {
       "type": "vless",
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "listen_port": {{ vless_masked_singbox_port | int + 2 }},
       "users": [ { "uuid": "{{ item.value.uuid }}" } ],
       "transport": { "type": "grpc", "service_name": "{{ item.value.grpc_service }}" }
