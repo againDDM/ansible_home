@@ -1,15 +1,15 @@
 
 - name: Ensure client config dir exists
   file:
-    path: "{{ vless_masked_client_dir }}"
+    path: "{{ proxy_masked_client_dir }}"
     state: directory
     mode: "0755"
 
 - name: Generate missing client parameters
   set_fact:
-    vless_masked_clients: >-
+    proxy_masked_clients: >-
       {{
-        vless_masked_clients | dict2items
+        proxy_masked_clients | dict2items
         | map('combine',
             {
               'value': (
@@ -22,16 +22,16 @@
               )
             }) | items2dict
       }}
-  loop: "{{ vless_masked_clients | dict2items }}"
+  loop: "{{ proxy_masked_clients | dict2items }}"
   loop_control:
     loop_var: item
 
 - name: Generate client configs for each client
   template:
     src: client.json.j2
-    dest: "{{ vless_masked_client_dir }}/{{ item.key }}.json"
+    dest: "{{ proxy_masked_client_dir }}/{{ item.key }}.json"
     mode: "0644"
-  loop: "{{ vless_masked_clients | dict2items }}"
+  loop: "{{ proxy_masked_clients | dict2items }}"
   loop_control:
     loop_var: item
   vars:

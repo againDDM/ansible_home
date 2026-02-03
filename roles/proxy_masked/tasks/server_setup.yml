@@ -76,15 +76,15 @@
   shell: >
     certbot certonly --webroot
     -w /var/www/fake
-    -d {{ vless_masked_domain }}
-    --email {{ vless_masked_email }}
+    -d {{ proxy_masked_domain }}
+    --email {{ proxy_masked_email }}
     --agree-tos
     --non-interactive
 
 - name: Configure nginx
   template:
     src: nginx.conf.j2
-    dest: /etc/nginx/sites-enabled/{{ vless_masked_domain }}
+    dest: /etc/nginx/sites-enabled/{{ proxy_masked_domain }}
 
 - name: Reload nginx
   systemd:

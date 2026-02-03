@@ -88,5 +88,5 @@
     - vless
   roles:
     - duckdns
-    - vless_masked
+    - proxy_masked
   become: true

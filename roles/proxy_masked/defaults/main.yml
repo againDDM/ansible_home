@@ -1,0 +1,9 @@
+proxy_masked_domain: ""
+proxy_masked_email: ""
+proxy_masked_singbox_port: 10000
+proxy_masked_client_dir: "/opt/proxy_masked/clients"
+proxy_masked_clients:
+  client1:
+    uuid: null
+    ws_path: null
+    grpc_service: null

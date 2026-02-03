@@ -1,9 +1,0 @@
-vless_masked_domain: ""
-vless_masked_email: ""
-vless_masked_singbox_port: 10000
-vless_masked_client_dir: "/opt/vless_masked/clients"
-vless_masked_clients:
-  client1:
-    uuid: null
-    ws_path: null
-    grpc_service: null

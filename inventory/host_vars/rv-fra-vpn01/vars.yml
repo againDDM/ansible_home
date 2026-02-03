@@ -8,8 +8,8 @@ wireguard_peers: "{{ vault_wireguard_peers }}"
 
 duckdns_domains: "{{ vault_duckdns_domains }}"
 duckdns_token: "{{ vault_duckdns_token }}"
-vless_masked_domain: "{{ vault_vless_masked_domain }}"
-vless_masked_email: "{{ vault_vless_masked_email }}"
+proxy_masked_domain: "{{ vault_proxy_masked_domain }}"
+proxy_masked_email: "{{ vault_proxy_masked_email }}"
 
 amneziawg_clients: "{{ vault_amneziawg_clients }}"
 amneziawg_params: "{{ vault_amneziawg_params }}"
