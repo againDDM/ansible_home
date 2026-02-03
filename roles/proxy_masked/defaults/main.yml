@@ -6,4 +6,3 @@ proxy_masked_clients:
   client1:
     uuid: null
     ws_path: null
-    grpc_service: null

@@ -10,22 +10,22 @@
       "server": "{{ proxy_masked_domain }}",
       "server_port": 443,
       "uuid": "{{ client_uuid }}",
-      "tls": { "enabled": true, "server_name": "{{ proxy_masked_domain }}" },
+      "tls": {
+        "enabled": true,
+        "server_name": "{{ proxy_masked_domain }}",
+        "alpn": ["h2", "http/1.1"],
+        "padding": true,
+        "utls": {
+          "enabled": true,
+          "fingerprint": "chrome"
+        }
+      },
       "transport": { "type": "ws", "path": "{{ client_ws_path }}" }
-    },
-    {
-      "tag": "grpc",
-      "type": "vless",
-      "server": "{{ proxy_masked_domain }}",
-      "server_port": 443,
-      "uuid": "{{ client_uuid }}",
-      "tls": { "enabled": true, "server_name": "{{ proxy_masked_domain }}" },
-      "transport": { "type": "grpc", "service_name": "{{ client_grpc_service }}" }
     },
     {
       "type": "urltest",
       "tag": "auto",
-      "outbounds": [ "ws", "grpc" ],
+      "outbounds": [ "ws" ],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "30s",
       "tolerance": 100

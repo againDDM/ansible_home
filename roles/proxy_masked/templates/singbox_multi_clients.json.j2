@@ -8,13 +8,6 @@
       "listen_port": {{ proxy_masked_singbox_port }},
       "users": [ { "uuid": "{{ item.value.uuid }}" } ],
       "transport": { "type": "ws", "path": "{{ item.value.ws_path }}" }
-    },
-    {
-      "type": "vless",
-      "listen": "127.0.0.1",
-      "listen_port": {{ proxy_masked_singbox_port | int + 2 }},
-      "users": [ { "uuid": "{{ item.value.uuid }}" } ],
-      "transport": { "type": "grpc", "service_name": "{{ item.value.grpc_service }}" }
     }{% if not loop.last %},{% endif %}
   {% endfor %}
   ],

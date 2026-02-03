@@ -29,12 +29,6 @@ server {
         proxy_set_header Host $host;
     }
 
-    # VLESS gRPC (реальный HTTP/2)
-    location /grpc- {
-        grpc_pass grpc://127.0.0.1:{{ proxy_masked_singbox_port | int + 2 }};
-        grpc_set_header Host $host;
-    }
-
     # Lua endpoint для сбора данных
     location /client-info {
         content_by_lua_file /etc/nginx/lua/client_info.lua;
