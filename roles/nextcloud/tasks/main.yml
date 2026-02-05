@@ -36,8 +36,7 @@
     files:
       - docker-compose.yaml
     remove_orphans: yes
-    pull: yes
-    restarted: false
+    pull: always
   register: output
   when:
     - compose is changed
@@ -50,6 +49,5 @@
     files:
       - docker-compose.yaml
     remove_orphans: yes
-    pull: no
-    restarted: false
+    pull: missing
   register: output
