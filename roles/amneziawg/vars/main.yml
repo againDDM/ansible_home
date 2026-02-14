@@ -23,6 +23,7 @@ amneziawg_lp_repo_src: >
 amneziawg_prerequisites:
   - python3-launchpadlib
   - gnupg
+  - qrencode
   - "linux-headers-{{ ansible_kernel }}"
 
 amneziawg_export_path: "/tmp/amneziawg-clients/{{ ansible_host }}/"

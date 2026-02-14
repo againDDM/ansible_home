@@ -62,9 +62,19 @@
     - /var/www/fake/.well-known/acme-challenge
     - /var/www
 
-- name: Copy initial nginx configure
+- name: Copy nginx conf
   copy:
     src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Copy nginx mime.types
+  copy:
+    src: mime.types
+    dest: /etc/nginx/mime.types
+
+- name: Copy nginx default site
+  copy:
+    src: default.conf
     dest: /etc/nginx/sites-enabled/default
 
 - name: Reload nginx
