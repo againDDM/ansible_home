@@ -20,6 +20,24 @@
         "type": "ws",
         "path": "{{ proxy_masked_singbox_vless_ws_path }}"
       }
+    },
+    {
+      "type": "naive",
+      "tag": "naive-in",
+      "listen": "127.0.0.1",
+      "network": "tcp",
+      "listen_port": {{ proxy_masked_singbox_naive_port }},
+      "users": [
+      {% for item in proxy_masked_clients | dict2items %}
+        {
+          "username": "{{ item.key }}",
+          "password": "{{ item.value.password }}",
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+      ],
+      "tls": {
+        "enabled": false
+      }
     }
   ],
   "outbounds": [

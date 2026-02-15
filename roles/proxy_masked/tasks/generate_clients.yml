@@ -24,7 +24,9 @@
   loop_control:
     loop_var: item
   vars:
+    client_name: "{{ item.value.name }}"
     client_uuid: "{{ item.value.uuid }}"
+    client_password: "{{ item.value.password }}"
   no_log: true
 
 - name: Generate sing-box server config with all clients

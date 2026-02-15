@@ -8,9 +8,13 @@
       - proxy_masked_singbox_vless_ws_path is string
       - proxy_masked_singbox_vless_ws_path | length > 10
       - proxy_masked_singbox_vless_ws_path is regex('^/[a-zA-Z0-9/_.-]+$')
+      - proxy_masked_singbox_naive_path is string
+      - proxy_masked_singbox_naive_path | length > 10
+      - proxy_masked_singbox_naive_path is regex('^/[a-zA-Z0-9/_.-]+$')
     fail_msg: >
-        proxy_masked_domain, proxy_masked_email and
-        proxy_masked_singbox_vless_ws_path must be set;
+        proxy_masked_domain, proxy_masked_email,
+        proxy_masked_singbox_vless_ws_path and
+        proxy_masked_singbox_naive_path must be set;
         the path must start with '/' and contain only allowed characters
         (letters, digits, slash, dot, underscore, hyphen).
 

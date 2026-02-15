@@ -11,6 +11,7 @@ duckdns_token: "{{ vault_duckdns_token }}"
 proxy_masked_domain: "{{ vault_proxy_masked_domain }}"
 proxy_masked_email: "{{ vault_proxy_masked_email }}"
 proxy_masked_singbox_vless_ws_path: "{{ vault_proxy_masked_singbox_vless_ws_path }}"
+proxy_masked_singbox_naive_path: "{{ vault_proxy_masked_singbox_naive_path }}"
 proxy_masked_clients: "{{ vault_proxy_masked_clients }}"
 
 amneziawg_clients: "{{ vault_amneziawg_clients }}"
