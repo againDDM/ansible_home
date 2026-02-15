@@ -1,8 +1,8 @@
 proxy_masked_domain: ""
 proxy_masked_email: ""
+proxy_masked_singbox_vless_ws_path: "" # example "/api/v2/stream/websocket"
 proxy_masked_singbox_vless_ws_port: 65123
 proxy_masked_client_dir: "/opt/proxy_masked/clients"
 proxy_masked_clients:
   client1:
     uuid: null
-    ws_path: null

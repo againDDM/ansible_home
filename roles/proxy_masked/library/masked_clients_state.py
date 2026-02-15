@@ -5,12 +5,11 @@ from ansible.module_utils.basic import AnsibleModule
 import os
 import json
 import uuid
-import secrets
 
 DOCUMENTATION = r"""
 ---
 module: masked_clients_state
-short_description: Manage UUID and WS path for masked clients with persistent state
+short_description: Manage UUID for masked clients with persistent state
 description:
   - Ensures that each masked client has a UUID and WebSocket path.
   - Stores generated values in a state file to provide idempotency.
@@ -19,7 +18,7 @@ options:
   clients:
     description:
       - Dictionary of clients with their current configuration.
-      - Each value is a dict that may contain 'uuid' and/or 'ws_path'.
+      - Each value is a dict that may contain 'uuid'.
     required: true
     type: dict
   state_file:
@@ -38,8 +37,7 @@ author:
 """
 
 EXAMPLES = r"""
-- name: Ensure masked clients have UUID and WS path
-  masked_clients_state:
+- name: Ensure masked clients have UUID masked_clients_state:
     clients: "{{ proxy_masked_clients }}"
     state_file: "/etc/ansible/state/masked_clients.json"
     force: false
@@ -56,7 +54,7 @@ changed:
   returned: always
   type: bool
 clients:
-  description: Updated clients dictionary with filled uuid and ws_path.
+  description: Updated clients dictionary with filled uuid.
   returned: success
   type: dict
 """
@@ -67,16 +65,13 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 
-def generate_ws_path():
-    """Generate a WebSocket path like /ws-<10-hex-chars>."""
-    return "/ws-" + secrets.token_urlsafe()
-
-
 def main():
     module = AnsibleModule(
         argument_spec=dict(
             clients=dict(type="dict", required=True),
-            state_file=dict(type="path", default="/var/lib/ansible/state/masked_clients.json"),
+            state_file=dict(
+                type="path", default="/opt/proxy_masked/state/masked_clients.json"
+            ),
             force=dict(type="bool", default=False),
         ),
         supports_check_mode=False,
@@ -100,9 +95,7 @@ def main():
 
     for client_name, client_data in clients.items():
         saved = state.get(client_name, {})
-
         new_client = client_data.copy()
-
         input_uuid = client_data.get("uuid")
         saved_uuid = saved.get("uuid")
         if force:
@@ -117,38 +110,14 @@ def main():
                 final_uuid = input_uuid
             else:
                 final_uuid = generate_uuid()
-
         if final_uuid != saved_uuid:
             changed = True
         new_client["uuid"] = final_uuid
-
-        input_ws = client_data.get("ws_path")
-        saved_ws = saved.get("ws_path")
-        if force:
-            if input_ws is not None:
-                final_ws = input_ws
-            else:
-                final_ws = generate_ws_path()
-        else:
-            if saved_ws is not None:
-                final_ws = saved_ws
-            elif input_ws is not None:
-                final_ws = input_ws
-            else:
-                final_ws = generate_ws_path()
-
-        if final_ws != saved_ws:
-            changed = True
-        new_client["ws_path"] = final_ws
-
         result_clients[client_name] = new_client
-
-        new_state[client_name] = {"uuid": final_uuid, "ws_path": final_ws}
-
+        new_state[client_name] = {"uuid": final_uuid, "name": client_name}
     if new_state != state:
         changed = True
         try:
-
             state_dir = os.path.dirname(state_file)
             if state_dir and not os.path.exists(state_dir):
                 os.makedirs(state_dir, mode=0o700)
@@ -156,7 +125,6 @@ def main():
                 json.dump(new_state, f, indent=2, sort_keys=True)
         except IOError as e:
             module.fail_json(msg=f"Failed to write state file {state_file}: {e}")
-
     module.exit_json(changed=changed, clients=result_clients)
 
 
