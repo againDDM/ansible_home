@@ -2,6 +2,26 @@
   "log": {
     "level": "error"
   },
+  "dns": {
+    "servers": [
+      {
+        "type": "https",
+        "tag": "adguard-https",
+        "server": "94.140.15.15",
+        "server_port": 443,
+        "path": "dns-query",
+        "headers": {},
+        "tls": {
+          "enabled": true,
+          "server_name": "dns.adguard-dns.com",
+          "utls": {
+            "enabled": true,
+            "fingerprint": "random"
+          }
+        }
+      }
+    ]
+  },
   "inbounds": [
     {
       "type": "mixed",
@@ -14,7 +34,7 @@
     {
       "tag": "ws",
       "type": "vless",
-      "server": "{{ proxy_masked_domain }}",
+      "server": "{{ ansible_host }}",
       "server_port": 443,
       "uuid": "{{ client_uuid }}",
       "tls": {
