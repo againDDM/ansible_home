@@ -1,7 +1,14 @@
 {
-  "log": { "level": "error" },
+  "log": {
+    "level": "error"
+  },
   "inbounds": [
-    { "type": "mixed", "listen": "127.0.0.1", "listen_port": 1080 }
+    {
+      "type": "mixed",
+      "tag": "in-full",
+      "listen": "127.0.0.1",
+      "listen_port": 1080
+    }
   ],
   "outbounds": [
     {
@@ -12,11 +19,31 @@
       "uuid": "{{ client_uuid }}",
       "tls": {
         "enabled": true,
-        "server_name": "{{ proxy_masked_domain }}"
+        "server_name": "{{ proxy_masked_domain }}",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
       },
-      "transport": { "type": "ws", "path": "{{ client_ws_path }}" }
+      "transport": {
+        "type": "ws",
+        "path": "{{ client_ws_path }}"
+      }
     },
-    { "type": "direct", "tag": "direct" }
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
   ],
-  "route": { "final": "ws" }
+  "route": {
+    "rules": [
+      {
+        "source_ip_is_private": true,
+        "ip_is_private": true,
+        "outbound": "direct"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "ws"
+  }
 }

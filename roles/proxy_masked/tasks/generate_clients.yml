@@ -5,25 +5,15 @@
     state: directory
     mode: "0755"
 
-- name: Generate missing client parameters
+- name: Manage masked clients UUID and WS paths
+  masked_clients_state:
+    clients: "{{ proxy_masked_clients }}"
+    force: false
+  register: masked_result
+
+- name: Update proxy_masked_clients fact
   set_fact:
-    proxy_masked_clients: >-
-      {{
-        proxy_masked_clients | dict2items
-        | map('combine',
-            {
-              'value': (
-                item.value | default({})
-                | combine({
-                    'uuid': (lookup('password','/dev/null length=32 chars=hex') if (item.value.uuid is not defined or item.value.uuid == None) else item.value.uuid),
-                    'ws_path': ("/ws-" + lookup('password','/dev/null length=10 chars=hex') if (item.value.ws_path is not defined or item.value.ws_path == None) else item.value.ws_path)
-                  })
-              )
-            }) | items2dict
-      }}
-  loop: "{{ proxy_masked_clients | dict2items }}"
-  loop_control:
-    loop_var: item
+    proxy_masked_clients: "{{ masked_result.clients }}"
 
 - name: Generate client configs for each client
   template:
@@ -36,6 +26,7 @@
   vars:
     client_uuid: "{{ item.value.uuid }}"
     client_ws_path: "{{ item.value.ws_path }}"
+  no_log: true
 
 - name: Generate sing-box server config with all clients
   template:

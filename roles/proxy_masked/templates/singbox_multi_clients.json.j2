@@ -1,11 +1,11 @@
 {
-  "log": { "level": "info" },
+  "log": { "level": "error" },
   "inbounds": [
   {% for item in proxy_masked_clients | dict2items %}
     {
       "type": "vless",
       "listen": "127.0.0.1",
-      "listen_port": {{ proxy_masked_singbox_port }},
+      "listen_port": {{ proxy_masked_singbox_vless_ws_port }},
       "users": [ { "uuid": "{{ item.value.uuid }}" } ],
       "transport": { "type": "ws", "path": "{{ item.value.ws_path }}" }
     }{% if not loop.last %},{% endif %}
