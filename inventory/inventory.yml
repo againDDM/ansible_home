@@ -20,7 +20,4 @@ all:
               hosts: {}
         docker:
           hosts:
-            htpc:
-        nginx:
-          hosts:
-            htpc:
+            hsrv:

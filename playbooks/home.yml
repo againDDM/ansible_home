@@ -10,7 +10,7 @@
 
 - name: nginx
   hosts:
-    - nginx
+    - htpc
   tags: nginx
   roles:
     - nginx
@@ -60,14 +60,15 @@
 
 - name: nextcloud
   hosts:
-    - htpc
+    - hsrv
   tags: nextcloud
+  become: true
   roles:
     - nextcloud
 
 - name: iperf
   hosts:
-    - htpc
+    - hsrv
   tags: iperf
   become: true
   roles:

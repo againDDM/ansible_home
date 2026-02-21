@@ -1,5 +1,4 @@
 ---
-version: "2.4"
 
 services:
 
@@ -8,9 +7,8 @@ services:
     image: "postgres:{{ postgres_version }}"
     restart: unless-stopped
     tty: true
-    oom_kill_disable: true
     mem_limit: "{{ postgres_memory_limit_mb }}M"
-    mem_reservation: "{{ postgres_memory_limit_mb // 2 }}M"
+    mem_reservation: "{{ postgres_memory_limit_mb}}M"
     shm_size: "{{ postgres_memory_limit_mb // 4 }}M"
     volumes:
       - "{{ pgdata_host_path }}:{{ pgdata_container_path }}:rw"
@@ -19,18 +17,28 @@ services:
       POSTGRES_USER: "{{ postgres_user }}"
       POSTGRES_PASSWORD: "{{ postgres_password }}"
       PGDATA: "{{ pgdata_container_path }}"
-    logging:
+    logging: &logging
       driver: "json-file"
       options:
         max-size: 10m
         max-file: "3"
+
+  redis:
+    container_name: "{{ redis_container_name }}"
+    image: "redis:{{ redis_version }}"
+    restart: unless-stopped
+    tty: true
+    mem_limit: "{{ redis_memory_limit_mb }}M"
+    mem_reservation: "{{ redis_memory_limit_mb}}M"
+    command: ["redis-server", "--requirepass", "{{ redis_password }}"]
+    logging:
+      <<: *logging
 
   app:
     container_name: "{{ application_container_name }}"
     image: "nextcloud:{{ nextcloud_version }}"
     restart: unless-stopped
     tty: true
-    oom_kill_disable: false
     mem_limit: "{{ nextcloud_memory_limit_mb }}M"
     volumes:
       - "{{ nextcloud_data_host_path }}:/var/www/html:rw"
@@ -39,14 +47,16 @@ services:
       POSTGRES_DB: "{{ postgres_db }}"
       POSTGRES_USER: "{{ postgres_user }}"
       POSTGRES_PASSWORD: "{{ postgres_password }}"
+      REDIS_HOST: "{{ redis_host }}"
+      REDIS_HOST_PORT: "6379"
+      REDIS_HOST_PASSWORD: "{{ redis_password }}"
     ports:
       - "{{ nextcloud_external_port }}:80"
     links:
       - "db:{{ postgres_host }}"
+      - "redis:{{ redis_host }}"
     depends_on:
       - "db"
+      - "redis"
     logging:
-      driver: "json-file"
-      options:
-        max-size: 10m
-        max-file: "3"
+      <<: *logging

@@ -1,15 +1,5 @@
 ---
 
-- name: install apt packages
-  apt:
-    pkg:
-      - docker-compose
-    state: present
-    install_recommends: no
-    update_cache: no
-  become: true
-  ignore_errors: true
-
 - name: mkdir project
   file:
     path: "{{ project_src }}"
@@ -24,7 +14,7 @@
     src: docker-compose.j2
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    validate: "docker-compose -f %s config"
+    validate: "docker compose -f %s config"
     mode: 0600
   register: compose
 
