@@ -10,7 +10,7 @@
 
 - name: nginx
   hosts:
-    - htpc
+    - hsrv
   tags: nginx
   roles:
     - nginx
