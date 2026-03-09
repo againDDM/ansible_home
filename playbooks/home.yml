@@ -88,6 +88,7 @@
   tags:
     - vless
   roles:
+    - minio_standalone
     - duckdns
     - proxy_masked
   become: true

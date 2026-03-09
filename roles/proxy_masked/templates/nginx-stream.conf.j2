@@ -1,0 +1,36 @@
+stream {
+
+    map $ssl_preread_server_name $backend {
+        {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
+        {{ proxy_masked_naive_domain }} naive_backend;
+        {% endif %}
+        {% if proxy_masked_trust_domain is defined and proxy_masked_trust_domain | length > 0 %}
+        {{ proxy_masked_trust_domain }} trust_backend;
+        {% endif %}
+        {{ proxy_masked_vless_domain }} web_backend;
+        default web_backend;
+    }
+
+    {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
+    upstream naive_backend {
+        server 127.0.0.1:{{ proxy_masked_naive_port }};
+    }
+
+    {% endif %}
+    {% if proxy_masked_trust_domain is defined and proxy_masked_trust_domain | length > 0 %}
+    upstream trust_backend {
+        server 127.0.0.1:{{ proxy_masked_trusttunnel_port }};
+    }
+
+    {% endif %}
+    upstream web_backend {
+        server 127.0.0.1:{{ proxy_masked_nginx_tls_vless_port }};
+    }
+
+    server {
+        listen 0.0.0.0:443 reuseport;
+        listen [::]:443 reuseport;
+        proxy_pass $backend;
+        ssl_preread on;
+    }
+}

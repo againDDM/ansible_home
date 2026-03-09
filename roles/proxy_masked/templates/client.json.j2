@@ -39,7 +39,7 @@
       "uuid": "{{ client_uuid }}",
       "tls": {
         "enabled": true,
-        "server_name": "{{ proxy_masked_domain }}",
+        "server_name": "{{ proxy_masked_vless_domain }}",
         "utls": {
           "enabled": true,
           "fingerprint": "random"
@@ -50,7 +50,7 @@
         "path": "{{ proxy_masked_singbox_vless_ws_path }}"
       }
     },
-    {% if false %}
+    {% if proxy_masked_naive_domain | length > 0 %}
     {
       "type": "naive",
       "tag": "naive-out",
@@ -58,16 +58,13 @@
       "server_port": 443,
       "username": "{{ client_name }}",
       "password": "{{ client_password }}",
-      "extra_headers": {
-        "X-Proxy-Flag": "naive"
-      },
       "udp_over_tcp": {
         "enabled": true,
         "version": 2
       },
       "tls": {
         "enabled": true,
-        "server_name": "{{ proxy_masked_domain }}"
+        "server_name": "{{ proxy_masked_naive_domain }}"
       }
     },
     {% endif %}

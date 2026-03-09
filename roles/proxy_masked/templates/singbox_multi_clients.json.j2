@@ -3,6 +3,29 @@
     "level": "error"
   },
   "inbounds": [
+    {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
+    {
+      "type": "naive",
+      "tag": "naive-in",
+      "listen": "127.0.0.1",
+      "network": "tcp",
+      "listen_port": {{ proxy_masked_naive_port }},
+      "users": [
+      {% for item in proxy_masked_clients | dict2items %}
+        {
+          "username": "{{ item.key }}",
+          "password": "{{ item.value.password }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+      ],
+      "tls": {
+        "enabled": true,
+        "server_name": "{{ proxy_masked_naive_domain }}",
+        "certificate_path": "/etc/letsencrypt/live/{{ proxy_masked_vless_domain }}/fullchain.pem",
+        "key_path": "/etc/letsencrypt/live/{{ proxy_masked_vless_domain }}/privkey.pem"
+      }
+    },
+    {% endif %}
     {
       "type": "vless",
       "listen": "127.0.0.1",
@@ -19,24 +42,6 @@
       "transport": {
         "type": "ws",
         "path": "{{ proxy_masked_singbox_vless_ws_path }}"
-      }
-    },
-    {
-      "type": "naive",
-      "tag": "naive-in",
-      "listen": "127.0.0.1",
-      "network": "tcp",
-      "listen_port": {{ proxy_masked_singbox_naive_port }},
-      "users": [
-      {% for item in proxy_masked_clients | dict2items %}
-        {
-          "username": "{{ item.key }}",
-          "password": "{{ item.value.password }}",
-        }{% if not loop.last %},{% endif %}
-      {% endfor %}
-      ],
-      "tls": {
-        "enabled": false
       }
     }
   ],

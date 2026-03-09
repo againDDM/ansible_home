@@ -35,3 +35,9 @@
     dest: /etc/sing-box/config.json
   notify:
     - restart sing-box
+
+- name: Ensure sing-box service is enabled
+  systemd:
+    name: sing-box
+    enabled: yes
+    state: started

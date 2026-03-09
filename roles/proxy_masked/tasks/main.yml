@@ -1,20 +1,18 @@
 - name: Assert required variables
   assert:
     that:
-      - proxy_masked_domain is string
-      - proxy_masked_domain | length > 0
+      - proxy_masked_vless_domain is string
+      - proxy_masked_vless_domain | length > 0
+      - proxy_masked_naive_domain is string
+      - proxy_masked_trust_domain is string
       - proxy_masked_email is string
       - proxy_masked_email | length > 0
       - proxy_masked_singbox_vless_ws_path is string
       - proxy_masked_singbox_vless_ws_path | length > 10
       - proxy_masked_singbox_vless_ws_path is regex('^/[a-zA-Z0-9/_.-]+$')
-      - proxy_masked_singbox_naive_path is string
-      - proxy_masked_singbox_naive_path | length > 10
-      - proxy_masked_singbox_naive_path is regex('^/[a-zA-Z0-9/_.-]+$')
     fail_msg: >
-        proxy_masked_domain, proxy_masked_email,
-        proxy_masked_singbox_vless_ws_path and
-        proxy_masked_singbox_naive_path must be set;
+        proxy_masked_vless_domain, proxy_masked_email,
+        proxy_masked_singbox_vless_ws_path;
         the path must start with '/' and contain only allowed characters
         (letters, digits, slash, dot, underscore, hyphen).
 

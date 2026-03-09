@@ -1,10 +1,16 @@
-proxy_masked_domain: ""
+proxy_masked_vless_domain: ""
+proxy_masked_naive_domain: ""
+proxy_masked_trust_domain: ""
 proxy_masked_email: ""
+proxy_masked_nginx_tls_vless_port: 65433
 proxy_masked_singbox_vless_ws_path: "" # example "/api/v2/stream/websocket"
-proxy_masked_singbox_vless_ws_port: 65123
-proxy_masked_singbox_naive_path: "" # example "/api/v3/naive"
-proxy_masked_singbox_naive_port: 65124
+proxy_masked_singbox_vless_ws_port: 65444
+proxy_masked_naive_port: 65445
+proxy_masked_trusttunnel_port: 65446
+proxy_masked_trusttunnel_version: "1.0.13"
 proxy_masked_client_dir: "/opt/proxy_masked/clients"
+proxy_masked_trusttunnel_install_dir: "/opt/trusttunnel"
+proxy_masked_screen_site: "http://127.0.0.1:9001"
 proxy_masked_clients:
   client1:
     uuid: null

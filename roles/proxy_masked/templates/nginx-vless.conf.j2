@@ -1,0 +1,28 @@
+server {
+    listen 127.0.0.1:{{ proxy_masked_nginx_tls_vless_port }} ssl http2;
+    server_name {{ proxy_masked_vless_domain }};
+
+    ssl_certificate     /etc/letsencrypt/live/{{ proxy_masked_vless_domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ proxy_masked_vless_domain }}/privkey.pem;
+
+    location / {
+        proxy_pass {{ proxy_masked_screen_site }};
+    }
+
+    # Health check
+    location /ping {
+        access_log off;
+        default_type text/plain;
+        return 200 "pong\n";
+    }
+
+    # VLESS WebSocket
+    location {{ proxy_masked_singbox_vless_ws_path }} {
+        proxy_pass http://127.0.0.1:{{ proxy_masked_singbox_vless_ws_port }};
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
+
+}

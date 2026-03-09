@@ -3,15 +3,19 @@
 ansible_host: "{{ vault_ansible_host }}"
 ansible_become_password: "{{ vault_ansible_become_password }}"
 
+minio_access_key: "{{ vault_minio_access_key }}"
+minio_secret_key: "{{ vault_minio_secret_key }}"
+
 wireguard_server: "{{ vault_wireguard_server }}"
 wireguard_peers: "{{ vault_wireguard_peers }}"
 
 duckdns_domains: "{{ vault_duckdns_domains }}"
 duckdns_token: "{{ vault_duckdns_token }}"
-proxy_masked_domain: "{{ vault_proxy_masked_domain }}"
+proxy_masked_vless_domain: "{{ vault_proxy_masked_vless_domain }}"
+proxy_masked_naive_domain: "{{ vault_proxy_masked_naive_domain }}"
+proxy_masked_trust_domain: "{{ vault_proxy_masked_trust_domain }}"
 proxy_masked_email: "{{ vault_proxy_masked_email }}"
 proxy_masked_singbox_vless_ws_path: "{{ vault_proxy_masked_singbox_vless_ws_path }}"
-proxy_masked_singbox_naive_path: "{{ vault_proxy_masked_singbox_naive_path }}"
 proxy_masked_clients: "{{ vault_proxy_masked_clients }}"
 
 amneziawg_clients: "{{ vault_amneziawg_clients }}"

@@ -4,3 +4,8 @@
     name: sing-box
     state: restarted
     enabled: yes
+
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
