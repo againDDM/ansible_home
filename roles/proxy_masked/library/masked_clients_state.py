@@ -100,6 +100,7 @@ def main():
     changed = False
 
     for client_name, client_data in clients.items():
+        client_data = {} if client_data is None else client_data
         saved = state.get(client_name, {})
         new_client = client_data.copy()
 
