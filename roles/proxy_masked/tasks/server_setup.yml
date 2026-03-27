@@ -1,3 +1,27 @@
+- name: Ensure keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download Sagernet GPG key
+  ansible.builtin.get_url:
+    url: https://sing-box.app/gpg.key
+    dest: /etc/apt/keyrings/sagernet.asc
+    mode: '0644'
+
+- name: Add Sagernet APT source
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/sagernet.sources
+    content: |
+      Types: deb
+      URIs: https://deb.sagernet.org/
+      Suites: *
+      Components: *
+      Enabled: yes
+      Signed-By: /etc/apt/keyrings/sagernet.asc
+    mode: '0644'
+
 - name: Install packages
   apt:
     name:
