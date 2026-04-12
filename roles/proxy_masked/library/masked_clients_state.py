@@ -105,13 +105,17 @@ def main():
         new_client = client_data.copy()
 
         input_uuid = client_data.get("uuid")
+        input_vision = client_data.get("vision")
         input_password = client_data.get("password")
 
         saved_uuid = saved.get("uuid")
+        saved_vision =saved.get("vision")
         saved_password = saved.get("password")
+
 
         if force:
             final_uuid = input_uuid if input_uuid is not None else generate_uuid()
+            final_vision = bool(input_vision if input_vision else False)
             final_password = (
                 input_password if input_password is not None else generate_password()
             )
@@ -122,6 +126,13 @@ def main():
                 final_uuid = input_uuid
             else:
                 final_uuid = generate_uuid()
+
+            if saved_vision is not None:
+                final_vision = bool(saved_vision)
+            elif input_vision is not None:
+                final_vision = bool(input_vision)
+            else:
+                final_vision = False
 
             if saved_password is not None:
                 final_password = saved_password
@@ -136,12 +147,14 @@ def main():
         new_client["uuid"] = final_uuid
         new_client["password"] = final_password
         new_client["name"] = client_name
+        new_client["vision"] = final_vision
 
         result_clients[client_name] = new_client
         new_state[client_name] = {
             "uuid": final_uuid,
             "password": final_password,
             "name": client_name,
+            "vision": final_vision,
         }
 
     if new_state != state:

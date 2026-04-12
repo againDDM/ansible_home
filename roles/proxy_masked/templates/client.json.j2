@@ -37,6 +37,9 @@
       "server": "{{ ansible_host }}",
       "server_port": 443,
       "uuid": "{{ client_uuid }}",
+      {% if false and item.vision | default(false) %}
+      "flow": "xtls-rprx-vision",
+      {% endif %}
       "tls": {
         "enabled": true,
         "server_name": "{{ proxy_masked_vless_domain }}",

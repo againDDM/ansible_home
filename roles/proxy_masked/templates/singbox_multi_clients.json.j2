@@ -13,6 +13,9 @@
       "users": [
       {% for item in proxy_masked_clients | dict2items %}
         {
+          {% if item.vision | default(false) %}
+          "flow": "xtls-rprx-vision",
+          {% endif %}
           "username": "{{ item.key }}",
           "password": "{{ item.value.password }}"
         }{% if not loop.last %},{% endif %}
