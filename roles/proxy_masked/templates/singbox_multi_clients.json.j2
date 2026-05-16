@@ -23,6 +23,12 @@
     }
   ],
   "inbounds": [
+    {
+      "type": "socks",
+      "tag": "warp-socks-in",
+      "listen": "127.0.0.1",
+      "listen_port": 1080
+    },
     {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
     {
       "type": "naive",
@@ -91,6 +97,10 @@
   ],
   "route": {
     "rules": [
+      {
+        "inbound": "warp-socks-in",
+        "outbound": "warp"
+      },
       {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
       {
         "inbound": "naive-in",

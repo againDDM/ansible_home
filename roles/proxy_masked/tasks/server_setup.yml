@@ -102,3 +102,52 @@
   systemd:
     name: nginx
     state: reloaded
+
+- name: Install sing-box WARP watchdog script
+  copy:
+    dest: /usr/local/bin/singbox-warp-watchdog.sh
+    mode: '0755'
+    content: |
+      #!/usr/bin/env bash
+      curl -sm5 -x \
+        socks5://127.0.0.1:1080 \
+        http://google.com/generate_204 \
+      || systemctl restart sing-box
+
+- name: Install sing-box watchdog service
+  copy:
+    dest: /etc/systemd/system/singbox-warp-watchdog.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Sing-box WARP watchdog
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/local/bin/singbox-warp-watchdog.sh
+
+- name: Install sing-box watchdog timer
+  copy:
+    dest: /etc/systemd/system/singbox-warp-watchdog.timer
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Run sing-box WARP watchdog every minute
+
+      [Timer]
+      OnBootSec=1min
+      OnUnitActiveSec=1min
+      Unit=singbox-warp-watchdog.service
+
+      [Install]
+      WantedBy=timers.target
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Enable and start sing-box watchdog timer
+  systemd:
+    name: singbox-warp-watchdog.timer
+    enabled: true
+    state: started
