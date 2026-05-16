@@ -1,0 +1,1 @@
+vless://{{ client_uuid }}@{{ ansible_host }}:443?encryption=none&security=tls&sni={{ proxy_masked_vless_domain }}&type=ws&host={{ proxy_masked_vless_domain }}&path={{ proxy_masked_singbox_vless_ws_warp_path | urlencode }}#{{ client_name }}-warp

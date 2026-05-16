@@ -1,9 +1,21 @@
-
-- name: Ensure client config dir exists
+- name: Ensure client config dirs exists
   file:
-    path: "{{ proxy_masked_client_dir }}"
+    path: "{{ item }}"
     state: directory
     mode: "0755"
+  loop:
+    - "{{ proxy_masked_clients_dir }}"
+    - "{{ proxy_masked_singbox_clients_dir }}"
+    - "{{ proxy_masked_vless_links_dir }}"
+    - "{{ proxy_masked_vless_qr_dir }}"
+    - "{{ proxy_masked_naive_clients_dir }}"
+    - "{{ proxy_masked_naive_qr_dir }}"
+
+- name: Install QR encoder
+  apt:
+    name: qrencode
+    state: present
+    update_cache: yes
 
 - name: Manage masked clients UUID and WS paths
   masked_clients_state:
@@ -15,10 +27,10 @@
   set_fact:
     proxy_masked_clients: "{{ masked_result.clients }}"
 
-- name: Generate client configs for each client
+- name: Generate sing-box client configs for each client
   template:
     src: client.json.j2
-    dest: "{{ proxy_masked_client_dir }}/{{ item.key }}.json"
+    dest: "{{ proxy_masked_singbox_clients_dir }}/{{ item.key }}.json"
     mode: "0644"
   loop: "{{ proxy_masked_clients | dict2items }}"
   loop_control:
@@ -28,6 +40,100 @@
     client_uuid: "{{ item.value.uuid }}"
     client_password: "{{ item.value.password }}"
   no_log: true
+
+- name: Generate VLESS direct links
+  template:
+    src: vless_direct_uri.j2
+    dest: "{{ proxy_masked_vless_links_dir }}/{{ item.key }}_direct.txt"
+    mode: "0644"
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  vars:
+    client_name: "{{ item.value.name }}"
+    client_uuid: "{{ item.value.uuid }}"
+  no_log: true
+
+- name: Generate VLESS warp links
+  template:
+    src: vless_warp_uri.j2
+    dest: "{{ proxy_masked_vless_links_dir }}/{{ item.key }}_warp.txt"
+    mode: "0644"
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  vars:
+    client_name: "{{ item.value.name }}"
+    client_uuid: "{{ item.value.uuid }}"
+  no_log: true
+
+- name: Generate QR for VLESS direct links
+  shell: >
+    qrencode
+    -t png
+    -o {{ proxy_masked_vless_qr_dir }}/{{ item.key }}_direct.png
+    < {{ proxy_masked_vless_links_dir }}/{{ item.key }}_direct.txt
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  no_log: true
+
+- name: Generate QR for VLESS warp links
+  shell: >
+    qrencode
+    -t png
+    -o {{ proxy_masked_vless_qr_dir }}/{{ item.key }}_warp.png
+    < {{ proxy_masked_vless_links_dir }}/{{ item.key }}_warp.txt
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  no_log: true
+
+- name: Generate official naive client configs
+  template:
+    src: naive.json.j2
+    dest: "{{ proxy_masked_naive_clients_dir }}/{{ item.key }}.json"
+    mode: "0644"
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  vars:
+    client_name: "{{ item.value.name }}"
+    client_password: "{{ item.value.password }}"
+  no_log: true
+  when:
+    - proxy_masked_naive_domain is defined
+    - proxy_masked_naive_domain | length > 0
+
+- name: Generate naive URIs
+  template:
+    src: naive_uri.j2
+    dest: "{{ proxy_masked_naive_clients_dir }}/{{ item.key }}.txt"
+    mode: "0644"
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  no_log: true
+  vars:
+    client_name: "{{ item.value.name }}"
+    client_password: "{{ item.value.password }}"
+  when:
+    - proxy_masked_naive_domain is defined
+    - proxy_masked_naive_domain | length > 0
+
+- name: Generate QR for naive URIs
+  shell: >
+    qrencode
+    -t png
+    -o {{ proxy_masked_naive_qr_dir }}/{{ item.key }}.png
+    < {{ proxy_masked_naive_clients_dir }}/{{ item.key }}.txt
+  loop: "{{ proxy_masked_clients | dict2items }}"
+  loop_control:
+    loop_var: item
+  no_log: true
+  when:
+    - proxy_masked_naive_domain is defined
+    - proxy_masked_naive_domain | length > 0
 
 - name: Generate sing-box server config with all clients
   template:

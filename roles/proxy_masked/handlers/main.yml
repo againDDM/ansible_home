@@ -9,3 +9,8 @@
   systemd:
     name: nginx
     state: restarted
+
+- name: restart caddy
+  systemd:
+    name: caddy
+    state: restarted

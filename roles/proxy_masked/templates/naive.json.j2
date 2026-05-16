@@ -1,0 +1,14 @@
+{
+  "listen": [
+    "socks://127.0.0.1:1080",
+    "http://127.0.0.1:1081"
+  ],
+
+  "proxy": "https://{{ client_name }}:{{ client_password | urlencode }}@{{ proxy_masked_naive_domain }}:{{ proxy_masked_naive_port }}",
+
+  "insecure-concurrency": 4,
+
+  "host-resolver-rules": "MAP {{ proxy_masked_naive_domain }} {{ ansible_host }}",
+
+  "log": ""
+}
