@@ -2,6 +2,26 @@
   "log": {
     "level": "error"
   },
+  "endpoints": [
+    {
+      "type": "wireguard",
+      "tag": "warp",
+      "name": "warp0",
+      "mtu": 1280,
+      "address": {{ proxy_masked_warp_interface.Address | to_json }},
+      "private_key": "{{ proxy_masked_warp_interface.PrivateKey }}",
+      "peers": [
+        {
+          "address": "{{ proxy_masked_warp_peer.Endpoint.split(':')[0] }}",
+          "port": {{ proxy_masked_warp_peer.Endpoint.split(':')[1] | int }},
+          "public_key": "{{ proxy_masked_warp_peer.PublicKey }}",
+          "allowed_ips": {{ proxy_masked_warp_peer.AllowedIPs | to_json }},
+          "persistent_keepalive_interval": {{ proxy_masked_warp_peer.PersistentKeepalive | default(25) | int }},
+          "reserved": {{ proxy_masked_warp_peer.Reserved | default([0, 0, 0]) | to_json }}
+        }
+      ]
+    }
+  ],
   "inbounds": [
     {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
     {
@@ -13,9 +33,6 @@
       "users": [
       {% for item in proxy_masked_clients | dict2items %}
         {
-          {% if item.vision | default(false) %}
-          "flow": "xtls-rprx-vision",
-          {% endif %}
           "username": "{{ item.key }}",
           "password": "{{ item.value.password }}"
         }{% if not loop.last %},{% endif %}
@@ -31,14 +48,14 @@
     {% endif %}
     {
       "type": "vless",
+      "tag": "vless-direct",
       "listen": "127.0.0.1",
       "listen_port": {{ proxy_masked_singbox_vless_ws_port }},
       "users": [
       {% for item in proxy_masked_clients | dict2items %}
         {
           "name": "{{ item.key }}",
-          "uuid": "{{ item.value.uuid }}",
-          "flow": ""
+          "uuid": "{{ item.value.uuid }}"
         }{% if not loop.last %},{% endif %}
       {% endfor %}
       ],
@@ -46,11 +63,49 @@
         "type": "ws",
         "path": "{{ proxy_masked_singbox_vless_ws_path }}"
       }
+    },
+    {
+      "type": "vless",
+      "tag": "vless-warp",
+      "listen": "127.0.0.1",
+      "listen_port": {{ proxy_masked_singbox_vless_ws_warp_port }},
+      "users": [
+      {% for item in proxy_masked_clients | dict2items %}
+        {
+          "name": "{{ item.key }}",
+          "uuid": "{{ item.value.uuid }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+      ],
+      "transport": {
+        "type": "ws",
+        "path": "{{ proxy_masked_singbox_vless_ws_warp_path }}"
+      }
     }
   ],
   "outbounds": [
     {
-      "type": "direct"
+      "type": "direct",
+      "tag": "direct"
     }
-  ]
+  ],
+  "route": {
+    "rules": [
+      {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
+      {
+        "inbound": "naive-in",
+        "outbound": "direct"
+      },
+      {% endif %}
+      {
+        "inbound": "vless-direct",
+        "outbound": "direct"
+      },
+      {
+        "inbound": "vless-warp",
+        "outbound": "warp"
+      }
+    ],
+    "final": "direct"
+  }
 }

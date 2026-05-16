@@ -1,0 +1,33 @@
+---
+- name: Ensure installation directory exists
+  file:
+    path: "{{ proxy_masked_warp_install_dir }}"
+    state: directory
+
+- name: Download WGCF binary
+  get_url:
+    url: "{{ proxy_masked_warp_wgcf_download_url }}"
+    dest: "{{ proxy_masked_warp_binary_path }}"
+    mode: '0755'
+
+- name: Register with WGCF (creates wgcf-account.toml)
+  command: "{{ proxy_masked_warp_binary_path }} register --accept-tos"
+  args:
+    chdir: "{{ proxy_masked_warp_install_dir }}"
+    creates: "{{ proxy_masked_warp_install_dir }}/wgcf-account.toml"
+
+- name: Generate WGCF configuration (creates wgcf-profile.conf)
+  command: "{{ proxy_masked_warp_binary_path }} generate"
+  args:
+    chdir: "{{ proxy_masked_warp_install_dir }}"
+    creates: "{{ proxy_masked_wgcf_profile_file }}"
+
+- name: Parse warp config (custom module)
+  warp_config_parse:
+    file_path: "{{ proxy_masked_wgcf_profile_file }}"
+  register: wg_config
+
+- name: Expose parsed WARP config for templates
+  set_fact:
+    proxy_masked_warp_interface: "{{ wg_config.parsed_config.interface }}"
+    proxy_masked_warp_peer: "{{ wg_config.parsed_config.peers[0] }}"

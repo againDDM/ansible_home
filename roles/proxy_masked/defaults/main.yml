@@ -4,7 +4,9 @@ proxy_masked_trust_domain: ""
 proxy_masked_email: ""
 proxy_masked_nginx_tls_vless_port: 65433
 proxy_masked_singbox_vless_ws_path: "" # example "/api/v2/stream/websocket"
+proxy_masked_singbox_vless_ws_warp_path: "" # example "/api/v2/stream/websocket-warp"
 proxy_masked_singbox_vless_ws_port: 65444
+proxy_masked_singbox_vless_ws_warp_port: 65447
 proxy_masked_naive_port: 65445
 proxy_masked_trusttunnel_port: 65446
 proxy_masked_trusttunnel_version: "1.0.13"
@@ -15,3 +17,6 @@ proxy_masked_clients:
   client1:
     uuid: null
     password: null
+proxy_masked_warp_install_dir: "/opt/warp"  # Installation directory (user may change)
+proxy_masked_warp_binary_name: "wgcf"  # Binary name (rarely changed)
+proxy_masked_warp_wgcf_download_url: "https://github.com/ViRb3/wgcf/releases/download/v2.2.30/wgcf_2.2.30_linux_amd64"

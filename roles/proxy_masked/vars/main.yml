@@ -1,0 +1,3 @@
+proxy_masked_warp_binary_path: "{{ proxy_masked_warp_install_dir }}/{{ proxy_masked_warp_binary_name }}"  # Full binary path
+proxy_masked_wgcf_account_file: "{{ proxy_masked_warp_install_dir }}/wgcf-account.toml"  # Account file
+proxy_masked_wgcf_profile_file: "{{ proxy_masked_warp_install_dir }}/wgcf-profile.conf"  # Profile config file

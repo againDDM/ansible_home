@@ -4,3 +4,4 @@ netaddr
 kubernetes
 PyYAML
 jsonpatch
+textfsm
