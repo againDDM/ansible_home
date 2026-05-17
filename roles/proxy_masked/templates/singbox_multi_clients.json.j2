@@ -29,6 +29,29 @@
       "listen": "127.0.0.1",
       "listen_port": 1080
     },
+    {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
+    {
+      "type": "naive",
+      "tag": "naive-in",
+      "network": "tcp",
+      "listen": "127.0.0.1",
+      "listen_port": {{ proxy_masked_naive_port }},
+      "users": [
+      {% for item in proxy_masked_clients | dict2items %}
+        {
+          "username": "{{ item.key }}",
+          "password": "{{ item.value.password }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+      ],
+      "tls": {
+        "enabled": true,
+        "server_name": "{{ proxy_masked_naive_domain }}",
+        "certificate_path": "/etc/letsencrypt/live/{{ proxy_masked_cert_name }}/fullchain.pem",
+        "key_path": "/etc/letsencrypt/live/{{ proxy_masked_cert_name }}/privkey.pem"
+      }
+    },
+    {% endif %}
     {
       "type": "vless",
       "tag": "vless-direct",
@@ -74,6 +97,12 @@
   ],
   "route": {
     "rules": [
+      {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
+      {
+        "inbound": "naive-in",
+        "outbound": "warp"
+      },
+      {% endif %}
       {
         "inbound": "warp-socks-in",
         "outbound": "warp"

@@ -80,15 +80,29 @@
   become: true
   roles:
     - amneziawg
-  tags: wireguard
+  tags:
+    - awg
+    - wireguard
+    - amneziawg
 
-- name:
+- name: proxy_masked_prepare
   hosts:
     - vless
   tags:
     - vless
+    - proxy_masked
   roles:
     - minio_standalone
     - duckdns
+  become: true
+
+- name: proxy_masked_deploy
+  hosts:
+    - vless
+  tags:
+    - vless
+    - vless_only
+    - proxy_masked
+  roles:
     - proxy_masked
   become: true

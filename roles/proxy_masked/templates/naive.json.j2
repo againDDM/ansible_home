@@ -1,10 +1,10 @@
 {
   "listen": [
-    "socks://127.0.0.1:1080",
-    "http://127.0.0.1:1081"
+    "socks://127.0.0.1:11080",
+    "http://127.0.0.1:18080"
   ],
 
-  "proxy": "https://{{ client_name }}:{{ client_password | urlencode }}@{{ proxy_masked_naive_domain }}:{{ proxy_masked_naive_port }}",
+  "proxy": "https://{{ client_name }}:{{ client_password | urlencode }}@{{ proxy_masked_naive_domain }},
 
   "insecure-concurrency": 4,
 
