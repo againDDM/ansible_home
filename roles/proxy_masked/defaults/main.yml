@@ -1,6 +1,7 @@
 proxy_masked_vless_domain: ""
 proxy_masked_naive_domain: ""
 proxy_masked_trust_domain: ""
+proxy_masked_cert_name: "{{ proxy_masked_vless_domain }}"
 proxy_masked_email: ""
 proxy_masked_nginx_tls_vless_port: 65433
 proxy_masked_singbox_vless_ws_path: "" # example "/api/v2/stream/websocket"
@@ -28,3 +29,4 @@ proxy_masked_warp_binary_name: "wgcf"
 proxy_masked_warp_wgcf_download_url: "https://github.com/ViRb3/wgcf/releases/download/v2.2.30/wgcf_2.2.30_linux_amd64"
 proxy_masked_caddy_install_dir: "/opt/proxy_masked/caddy"
 proxy_masked_caddy_binary_path: "{{ proxy_masked_caddy_install_dir }}/caddy"
+proxy_masked_skip_clients_config: true

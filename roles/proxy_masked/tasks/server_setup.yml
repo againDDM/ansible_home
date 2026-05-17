@@ -80,6 +80,7 @@
   shell: >
     certbot certonly --webroot
     -w /var/www/static
+    --cert-name {{ proxy_masked_cert_name }}
     -d {{ proxy_masked_vless_domain }}
     {% if proxy_masked_naive_domain is defined and proxy_masked_naive_domain | length > 0 %}
     -d {{ proxy_masked_naive_domain }}

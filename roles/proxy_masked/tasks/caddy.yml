@@ -63,7 +63,7 @@
     - /var/cache/proxy_masked/go-tmp
     - /var/cache/proxy_masked/go-cache
 
-- name: Install Caddy config
+- name: Render Caddy config
   template:
     src: caddy-naive.conf.j2
     dest: /etc/caddy/Caddyfile
@@ -104,12 +104,9 @@
       #!/usr/bin/env bash
       systemctl reload caddy || systemctl restart caddy
 
-- name: Reload systemd
-  systemd:
-    daemon_reload: true
-
 - name: Enable and start caddy
   systemd:
     name: caddy
     enabled: true
     state: started
+    daemon_reload: true

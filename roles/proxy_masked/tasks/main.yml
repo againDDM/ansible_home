@@ -1,6 +1,8 @@
 - name: Assert required variables
   assert:
     that:
+      - proxy_masked_cert_name is string
+      - proxy_masked_cert_name | length > 0
       - proxy_masked_vless_domain is string
       - proxy_masked_vless_domain | length > 0
       - proxy_masked_naive_domain is string

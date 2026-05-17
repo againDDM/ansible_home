@@ -1,23 +1,22 @@
 {
+  auto_https off
+  order forward_proxy before reverse_proxy
   log {
     exclude http.log.error
   }
 }
-
 {{ proxy_masked_naive_domain }}:{{ proxy_masked_naive_port }} {
-  tls /etc/letsencrypt/live/{{ proxy_masked_naive_domain }}/fullchain.pem /etc/letsencrypt/live/{{ proxy_masked_naive_domain }}/privkey.pem
+  tls /etc/letsencrypt/live/{{ proxy_masked_cert_name }}/fullchain.pem /etc/letsencrypt/live/{{ proxy_masked_cert_name }}/privkey.pem
   encode zstd gzip
-
-  route {
-    forward_proxy {
+  forward_proxy {
 {% for item in proxy_masked_clients | dict2items %}
-      basic_auth {{ item.key }} {{ item.value.password }}
+    basic_auth {{ item.key }} {{ item.value.password }}
 {% endfor %}
-      hide_ip
-      hide_via
-      probe_resistance
-    }
-
-    reverse_proxy {{ proxy_masked_screen_site }}
+    hide_ip
+    hide_via
+    probe_resistance
+  }
+  reverse_proxy {{ proxy_masked_screen_site }} {
+    header_up Host {upstream_hostport}
   }
 }
