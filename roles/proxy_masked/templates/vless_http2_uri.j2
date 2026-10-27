@@ -1,0 +1,1 @@
+vless://{{ client_uuid }}@{{ ansible_host }}:443?encryption=none&security=tls&sni={{ proxy_masked_vless_domain }}&alpn=h2&type=http&host={{ proxy_masked_vless_domain }}&path={{ client_http2_path | urlencode }}#{{ client_name }}-http2-{{ client_http2_mode }}

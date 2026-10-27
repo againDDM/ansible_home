@@ -1,0 +1,65 @@
+- name: Ensure keyring directory exists
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Amnezia PPA key
+  get_url:
+    url: "{{ amneziawg_lp_key_url }}"
+    dest: "{{ amneziawg_lp_keyring }}.asc"
+    mode: "0644"
+    timeout: 60
+  register: amneziawg_key
+  until: amneziawg_key is succeeded
+  retries: 3
+  delay: 5
+
+- name: Check Amnezia binary keyring
+  stat:
+    path: "{{ amneziawg_lp_keyring }}"
+  register: amneziawg_keyring
+
+- name: Convert Amnezia PPA key to binary keyring
+  command:
+    argv:
+      - gpg
+      - --batch
+      - --yes
+      - --dearmor
+      - --output
+      - "{{ amneziawg_lp_keyring }}"
+      - "{{ amneziawg_lp_keyring }}.asc"
+  when: amneziawg_key is changed or not amneziawg_keyring.stat.exists
+
+- name: Ensure Amnezia keyring is readable by APT
+  file:
+    path: "{{ amneziawg_lp_keyring }}"
+    mode: "0644"
+
+- name: Remove legacy Amnezia repository entries without signed-by
+  apt_repository:
+    repo: "{{ item.0 }} {{ item.1 }} {{ amneziawg_lp_release }} main"
+    state: absent
+    update_cache: false
+  loop: >-
+    {{ ['deb', 'deb-src'] | product([
+      amneziawg_lp_baseurl,
+      'http://ppa.launchpadcontent.net/amnezia/ppa/ubuntu',
+      'https://ppa.launchpad.net/amnezia/ppa/ubuntu',
+      'http://ppa.launchpad.net/amnezia/ppa/ubuntu'
+    ]) | list }}
+
+- name: Add Amnezia binary repository
+  apt_repository:
+    repo: "{{ amneziawg_lp_repo }}"
+    filename: amneziawg
+    state: present
+    update_cache: false
+
+- name: Add Amnezia source repository
+  apt_repository:
+    repo: "{{ amneziawg_lp_repo_src }}"
+    filename: amneziawg
+    state: present
+    update_cache: false

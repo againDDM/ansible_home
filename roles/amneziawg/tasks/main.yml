@@ -7,23 +7,9 @@
     state: present
     update_cache: yes
 
-# =========================
-# Ubuntu
-# =========================
-
-- name: Add Amnezia PPA (Ubuntu)
-  apt_repository:
-    repo: "{{ amneziawg_ubuntu_ppa }}"
-    state: present
-  when: ansible_distribution == "Ubuntu"
-
-# =========================
-# Debian
-# =========================
-
-- name: Configure Amnezia PPA on Debian
-  import_tasks: debian_ppa.yml
-  when: ansible_distribution == "Debian"
+- name: Configure Amnezia repository
+  import_tasks: repository.yml
+  when: ansible_distribution in ["Ubuntu", "Debian"]
 
 # =========================
 # Install

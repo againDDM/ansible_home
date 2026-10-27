@@ -87,7 +87,28 @@
         "type": "ws",
         "path": "{{ proxy_masked_singbox_vless_ws_warp_path }}"
       }
-    }
+    },
+    {% for mode in ['direct', 'warp'] %}
+    {
+      "type": "vless",
+      "tag": "vless-http2-{{ mode }}",
+      "listen": "127.0.0.1",
+      "listen_port": {{ proxy_masked_singbox_vless_http2_port if mode == 'direct' else proxy_masked_singbox_vless_http2_warp_port }},
+      "users": [
+      {% for item in proxy_masked_clients | dict2items %}
+        {
+          "name": "{{ item.key }}",
+          "uuid": "{{ item.value.uuid }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+      ],
+      "transport": {
+        "type": "http",
+        "host": ["{{ proxy_masked_vless_domain }}"],
+        "path": "{{ proxy_masked_singbox_vless_http2_path if mode == 'direct' else proxy_masked_singbox_vless_http2_warp_path }}"
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
   ],
   "outbounds": [
     {
@@ -113,6 +134,14 @@
       },
       {
         "inbound": "vless-warp",
+        "outbound": "warp"
+      },
+      {
+        "inbound": "vless-http2-direct",
+        "outbound": "direct"
+      },
+      {
+        "inbound": "vless-http2-warp",
         "outbound": "warp"
       }
     ],

@@ -92,7 +92,6 @@
     - vless
     - proxy_masked
   roles:
-    - minio_standalone
     - duckdns
   become: true
 

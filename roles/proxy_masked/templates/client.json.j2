@@ -34,6 +34,18 @@
       "tag": "in-warp",
       "listen": "127.0.0.1",
       "listen_port": 2080
+    },
+    {
+      "type": "socks",
+      "tag": "in-http2-direct",
+      "listen": "127.0.0.1",
+      "listen_port": 3080
+    },
+    {
+      "type": "socks",
+      "tag": "in-http2-warp",
+      "listen": "127.0.0.1",
+      "listen_port": 4080
     }
   ],
   "outbounds": [
@@ -75,6 +87,29 @@
         "path": "{{ proxy_masked_singbox_vless_ws_warp_path }}"
       }
     },
+    {% for mode in ['direct', 'warp'] %}
+    {
+      "tag": "http2-{{ mode }}",
+      "type": "vless",
+      "server": "{{ ansible_host }}",
+      "server_port": 443,
+      "uuid": "{{ client_uuid }}",
+      "tls": {
+        "enabled": true,
+        "server_name": "{{ proxy_masked_vless_domain }}",
+        "alpn": ["h2"],
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "http",
+        "host": ["{{ proxy_masked_vless_domain }}"],
+        "path": "{{ proxy_masked_singbox_vless_http2_path if mode == 'direct' else proxy_masked_singbox_vless_http2_warp_path }}"
+      }
+    },
+    {% endfor %}
     {
       "type": "direct",
       "tag": "direct"
@@ -82,6 +117,14 @@
   ],
   "route": {
     "rules": [
+      {
+        "inbound": ["in-http2-direct"],
+        "outbound": "http2-direct"
+      },
+      {
+        "inbound": ["in-http2-warp"],
+        "outbound": "http2-warp"
+      },
       {
         "inbound": [
           "in-warp"

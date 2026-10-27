@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Простая диагностика браузера: данные, доступные веб-странице через JavaScript.">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" href="data:,">
+  <title>Browser diagnostics</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0b1020; color: #e5e7eb; line-height: 1.65; }
+    main { width: min(100% - 40px, 960px); margin: 56px auto; }
+    .label { color: #8d9bb5; font-size: 12px; letter-spacing: .14em; }
+    h1 { margin: 12px 0 16px; color: #7aa2f7; font-size: clamp(26px, 5vw, 38px); line-height: 1.2; }
+    p { max-width: 760px; color: #aebbd0; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 24px 0 16px; }
+    button { padding: 10px 16px; border: 1px solid #34445e; border-radius: 8px; background: #162239; color: #e5e7eb; font: inherit; cursor: pointer; }
+    button:hover { background: #213251; }
+    :focus-visible { outline: 2px solid #7aa2f7; outline-offset: 4px; }
+    #status { color: #98c9b1; font-size: 13px; }
+    pre { margin: 0; padding: 24px; border: 1px solid #26334c; border-radius: 12px; background: #111827; overflow-x: auto; font-size: 13px; tab-size: 2; }
+    footer { margin-top: 20px; color: #8d9bb5; font-size: 12px; }
+    @media (max-width: 540px) { main { width: calc(100% - 24px); margin: 28px auto; } pre { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="label">BROWSER DIAGNOSTICS</div>
+    <h1>Что сайт видит о вас</h1>
+    <p>Эти данные доступны странице через JavaScript. Посмотрите, что браузер сообщает о себе, экране и устройстве. Значения могут быть округлены или скрыты настройками приватности.</p>
+    <div class="actions">
+      <button id="refresh" type="button">Обновить</button>
+      <button id="copy" type="button">Скопировать JSON</button>
+      <span id="status" role="status" aria-live="polite"></span>
+    </div>
+    <noscript><p>Для диагностики нужно включить JavaScript.</p></noscript>
+    <pre id="out" tabindex="0" aria-label="Данные браузера в формате JSON">Ожидание JavaScript…</pre>
+    <footer>Все вычисления выполняются локально. Страница не отправляет результаты на сервер и не обращается к сторонним сервисам. Значение null означает, что данных нет или API недоступен.</footer>
+  </main>
+  <script>
+    "use strict";
+
+    const output = document.getElementById("out");
+    const status = document.getElementById("status");
+    const read = (getValue) => {
+      try { return getValue() ?? null; }
+      catch { return null; }
+    };
+
+    // Based on the original diagnostics page from commit 0640164.
+    // Only browser APIs are used; no server endpoint is required.
+    function getData() {
+      return {
+        userAgent: read(() => navigator.userAgent),
+        platform: read(() => navigator.platform),
+        vendor: read(() => navigator.vendor),
+        language: read(() => navigator.language),
+        languages: read(() => Array.from(navigator.languages)),
+        hardwareConcurrency: read(() => navigator.hardwareConcurrency),
+        deviceMemoryGiB: read(() => navigator.deviceMemory),
+        maxTouchPoints: read(() => navigator.maxTouchPoints),
+        cookieEnabled: read(() => navigator.cookieEnabled),
+        doNotTrack: read(() => navigator.doNotTrack),
+        globalPrivacyControl: read(() => navigator.globalPrivacyControl),
+        webdriver: read(() => navigator.webdriver),
+        online: read(() => navigator.onLine),
+        secureContext: read(() => window.isSecureContext),
+        screen: {
+          width: read(() => screen.width),
+          height: read(() => screen.height),
+          availableWidth: read(() => screen.availWidth),
+          availableHeight: read(() => screen.availHeight),
+          colorDepth: read(() => screen.colorDepth),
+          pixelRatio: read(() => window.devicePixelRatio)
+        },
+        viewport: { width: window.innerWidth, height: window.innerHeight },
+        timezone: read(() => Intl.DateTimeFormat().resolvedOptions().timeZone),
+        utcOffsetMinutes: new Date().getTimezoneOffset(),
+        preferences: {
+          darkMode: read(() => window.matchMedia("(prefers-color-scheme: dark)").matches),
+          reducedMotion: read(() => window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+        },
+        connection: {
+          effectiveType: read(() => navigator.connection.effectiveType),
+          downlinkMbps: read(() => navigator.connection.downlink),
+          roundTripTimeMs: read(() => navigator.connection.rtt),
+          saveData: read(() => navigator.connection.saveData)
+        },
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    function refresh() {
+      output.textContent = JSON.stringify(getData(), null, 2);
+      status.textContent = "Данные обновлены";
+    }
+
+    document.getElementById("refresh").addEventListener("click", refresh);
+    document.getElementById("copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(output.textContent);
+        status.textContent = "JSON скопирован";
+      } catch {
+        status.textContent = "Копирование недоступно. Выделите и скопируйте JSON вручную.";
+        output.focus();
+      }
+    });
+
+    refresh();
+  </script>
+</body>
+</html>

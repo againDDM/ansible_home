@@ -46,6 +46,24 @@
     - /etc/nginx/sites-enabled
     - /etc/nginx/modules-enabled
 
+- name: Create browser diagnostics site directory
+  file:
+    path: "{{ proxy_masked_screen_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  when: proxy_masked_screen_site | length == 0
+
+- name: Deploy browser diagnostics page
+  copy:
+    src: index.html
+    dest: "{{ proxy_masked_screen_root }}/index.html"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  when: proxy_masked_screen_site | length == 0
+
 - name: Copy nginx conf
   copy:
     src: nginx.conf

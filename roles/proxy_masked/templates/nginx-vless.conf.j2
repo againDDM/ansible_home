@@ -6,7 +6,13 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/{{ proxy_masked_cert_name }}/privkey.pem;
 
     location / {
+{% if proxy_masked_screen_site | length > 0 %}
         proxy_pass {{ proxy_masked_screen_site }};
+{% else %}
+        root "{{ proxy_masked_screen_root }}";
+        index index.html;
+        try_files $uri $uri/ =404;
+{% endif %}
     }
 
     # Health check
@@ -32,6 +38,26 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
         proxy_set_header Host $host;
+    }
+
+    # VLESS HTTP/2 (direct). grpc_pass preserves HTTP/2 to the h2c backend.
+    location ^~ {{ proxy_masked_singbox_vless_http2_path }} {
+        grpc_pass grpc://127.0.0.1:{{ proxy_masked_singbox_vless_http2_port }};
+        grpc_set_header Host $host;
+        grpc_read_timeout 1h;
+        grpc_send_timeout 1h;
+        client_body_timeout 1h;
+        client_max_body_size 0;
+    }
+
+    # VLESS HTTP/2 (warp)
+    location ^~ {{ proxy_masked_singbox_vless_http2_warp_path }} {
+        grpc_pass grpc://127.0.0.1:{{ proxy_masked_singbox_vless_http2_warp_port }};
+        grpc_set_header Host $host;
+        grpc_read_timeout 1h;
+        grpc_send_timeout 1h;
+        client_body_timeout 1h;
+        client_max_body_size 0;
     }
 
 }

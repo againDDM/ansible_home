@@ -9,6 +9,9 @@
       - proxy_masked_trust_domain is string
       - proxy_masked_email is string
       - proxy_masked_email | length > 0
+      - proxy_masked_screen_site is string
+      - proxy_masked_screen_root is string
+      - proxy_masked_screen_root.startswith('/')
       - proxy_masked_singbox_vless_ws_path is string
       - proxy_masked_singbox_vless_ws_path | length > 10
       - proxy_masked_singbox_vless_ws_path is regex('^/[a-zA-Z0-9/_.-]+$')
@@ -16,12 +19,27 @@
       - proxy_masked_singbox_vless_ws_warp_path | length > 10
       - proxy_masked_singbox_vless_ws_warp_path is regex('^/[a-zA-Z0-9/_.-]+$')
       - proxy_masked_singbox_vless_ws_path != proxy_masked_singbox_vless_ws_warp_path
+      - proxy_masked_singbox_vless_http2_path is string
+      - proxy_masked_singbox_vless_http2_path | length > 10
+      - proxy_masked_singbox_vless_http2_path is regex('^/[a-zA-Z0-9/_.-]+$')
+      - proxy_masked_singbox_vless_http2_warp_path is string
+      - proxy_masked_singbox_vless_http2_warp_path | length > 10
+      - proxy_masked_singbox_vless_http2_warp_path is regex('^/[a-zA-Z0-9/_.-]+$')
+      - proxy_masked_singbox_vless_http2_path not in [proxy_masked_singbox_vless_ws_path, proxy_masked_singbox_vless_ws_warp_path]
+      - proxy_masked_singbox_vless_http2_warp_path not in [proxy_masked_singbox_vless_ws_path, proxy_masked_singbox_vless_ws_warp_path]
+      - not proxy_masked_singbox_vless_http2_path.startswith(proxy_masked_singbox_vless_http2_warp_path)
+      - not proxy_masked_singbox_vless_http2_warp_path.startswith(proxy_masked_singbox_vless_http2_path)
     fail_msg: >
         proxy_masked_vless_domain, proxy_masked_email,
         proxy_masked_singbox_vless_ws_path,
-        proxy_masked_singbox_vless_ws_warp_path;
+        proxy_masked_singbox_vless_ws_warp_path,
+        proxy_masked_singbox_vless_http2_path,
+        proxy_masked_singbox_vless_http2_warp_path;
         the paths must start with '/' and contain only allowed characters
         (letters, digits, slash, dot, underscore, hyphen), and must be different.
+        HTTP/2 paths must not be prefixes of each other.
+        proxy_masked_screen_site must be a string (empty for the built-in page),
+        and proxy_masked_screen_root must be an absolute path.
 
 - name: Include tasks for warp settings
   include_tasks: warp.yml
